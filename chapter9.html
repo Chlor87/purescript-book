@@ -4,47 +4,27 @@
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Asynchronous Effects - PureScript by Example</title>
-        
-        
-
-
         <!-- Custom HTML head -->
-        
-
-
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
-        
         <link rel="icon" href="favicon.svg">
-        
-        
         <link rel="shortcut icon" href="favicon.png">
-        
         <link rel="stylesheet" href="css/variables.css">
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
-        
         <link rel="stylesheet" href="css/print.css" media="print">
-        
-
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        
         <link rel="stylesheet" href="fonts/fonts.css">
-        
-
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        
-
-        
     </head>
     <body>
         <!-- Provide site root to javascript -->
@@ -103,7 +83,6 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                
                 <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky bordered">
                     <div class="left-buttons">
@@ -120,33 +99,26 @@
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                         </ul>
-                        
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
-                        
                     </div>
 
                     <h1 class="menu-title">PureScript by Example</h1>
 
                     <div class="right-buttons">
-                        
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
-                        
-                        
                         <a href="https://github.com/purescript-contrib/purescript-book" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        
                     </div>
                 </div>
 
-                
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -154,8 +126,6 @@
                         </ul>
                     </div>
                 </div>
-                
-
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
                 <script type="text/javascript">
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
@@ -167,10 +137,10 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#asynchronous-effects" id="asynchronous-effects">Asynchronous Effects</a></h1>
-<h2><a class="header" href="#chapter-goals" id="chapter-goals">Chapter Goals</a></h2>
+                        <h1 id="asynchronous-effects"><a class="header" href="#asynchronous-effects">Asynchronous Effects</a></h1>
+<h2 id="chapter-goals"><a class="header" href="#chapter-goals">Chapter Goals</a></h2>
 <p>This chapter focuses on the <code>Aff</code> monad, which is similar to the <code>Effect</code> monad, but represents <em>asynchronous</em> side-effects. We'll demonstrate examples of asynchronously interacting with the filesystem and making HTTP requests. We'll also cover how to manage sequential and parallel execution of asynchronous effects.</p>
-<h2><a class="header" href="#project-setup" id="project-setup">Project Setup</a></h2>
+<h2 id="project-setup"><a class="header" href="#project-setup">Project Setup</a></h2>
 <p>New PureScript libraries introduced in this chapter are:</p>
 <ul>
 <li><code>aff</code> - defines the <code>Aff</code> monad.</li>
@@ -181,10 +151,10 @@
 <p>When running outside of the browser (such as in our Node.js environment), the <code>affjax</code> library requires the <code>xhr2</code> NPM module. Install that by running:</p>
 <pre><code class="language-shell">$ npm install
 </code></pre>
-<h2><a class="header" href="#asynchronous-javascript" id="asynchronous-javascript">Asynchronous JavaScript</a></h2>
+<h2 id="asynchronous-javascript"><a class="header" href="#asynchronous-javascript">Asynchronous JavaScript</a></h2>
 <p>A convenient way to work with asynchronous code in JavaScript is with <a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Async_await"><code>async</code> and <code>await</code></a>. See <a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Introducing">this article on asynchronous JavaScript</a> for more background information.</p>
 <p>Here is an example of using this technique to copy the contents of one file to another file:</p>
-<pre><code class="language-js">var fsPromises = require('fs').promises;
+<pre><code class="language-js">import { promises as fsPromises } from 'fs'
 
 async function copyFile(file1, file2) {
   let data = await fsPromises.readFile(file1, { encoding: 'utf-8' });
@@ -201,27 +171,9 @@ copyFile('file1.txt', 'file2.txt')
 <li>Callbacks lead to excessive nesting, known as &quot;Callback Hell&quot; or the &quot;Pyramid of Doom&quot;.</li>
 <li>Synchronous functions block execution of the other code in your app.</li>
 </ul>
-<h2><a class="header" href="#asynchronous-purescript" id="asynchronous-purescript">Asynchronous PureScript</a></h2>
+<h2 id="asynchronous-purescript"><a class="header" href="#asynchronous-purescript">Asynchronous PureScript</a></h2>
 <p>The <code>Aff</code> monad in PureScript offers similar ergonomics of JavaScript's <code>async</code>/<code>await</code> syntax. Here is the same <code>copyFile</code> example from before, but rewritten in PureScript using <code>Aff</code>:</p>
-<pre><code class="language-hs">import Prelude
-import Data.Either (Either(..))
-import Effect.Aff (Aff, attempt, message)
-import Effect.Class.Console (log)
-import Node.Encoding (Encoding(..))
-import Node.FS.Aff (readTextFile, writeTextFile)
-import Node.Path (FilePath)
-
-copyFile :: FilePath -&gt; FilePath -&gt; Aff Unit
-copyFile file1 file2 = do
-  my_data &lt;- readTextFile UTF8 file1
-  writeTextFile UTF8 file2 my_data
-
-main :: Aff Unit
-main = do
-  result &lt;- attempt $ copyFile &quot;file1.txt&quot; &quot;file2.txt&quot;
-  case result of
-    Left e -&gt; log $ &quot;There was a problem with copyFile: &quot; &lt;&gt; message e
-    _ -&gt; pure unit
+<pre><code class="language-hs">
 </code></pre>
 <p>It is also possible to re-write the above snippet using callbacks or synchronous functions (for example with <code>Node.FS.Async</code> and <code>Node.FS.Sync</code> respectively), but those share the same downsides as discussed earlier with JavaScript, and so that coding style is not recommended.</p>
 <p>The syntax for working with <code>Aff</code> is very similar to working with <code>Effect</code>. They are both monads, and can therefore be written with do notation.</p>
@@ -238,7 +190,7 @@ main = do
 <pre><code class="language-hs">attempt :: forall a. Aff a -&gt; Aff (Either Error a)
 </code></pre>
 <p>You should hopefully be able to draw on your knowledge of concepts from previous chapters and combine this with the new <code>Aff</code> patterns learned in the above <code>copyFile</code> example to tackle the following exercises:</p>
-<h2><a class="header" href="#exercises" id="exercises">Exercises</a></h2>
+<h2 id="exercises"><a class="header" href="#exercises">Exercises</a></h2>
 <ol>
 <li>
 <p>(Easy) Write a <code>concatenateFiles</code> function which concatenates two text files.</p>
@@ -250,27 +202,18 @@ main = do
 <p>(Medium) Write a function <code>countCharacters :: FilePath -&gt; Aff (Either Error Int)</code> that returns the number of characters in a file, or an error if one is encountered.</p>
 </li>
 </ol>
-<h2><a class="header" href="#additional-aff-resources" id="additional-aff-resources">Additional Aff Resources</a></h2>
+<h2 id="additional-aff-resources"><a class="header" href="#additional-aff-resources">Additional Aff Resources</a></h2>
 <p>If you haven't already taken a look at the <a href="https://pursuit.purescript.org/packages/purescript-aff/">official Aff guide</a>, skim through that now. It's not a direct prerequisite for completing the remaining exercises in this chapter, but you may find it helpful to lookup some functions on Pursuit.</p>
 <p>You're also welcome to consult these supplemental resources too, but again, the exercises in this chapter don't depend on them:</p>
 <ul>
 <li><a href="https://blog.drewolson.org/asynchronous-purescript">Drew's Aff Post</a></li>
 <li><a href="https://github.com/JordanMartinez/purescript-jordans-reference/tree/latestRelease/21-Hello-World/02-Effect-and-Aff/src/03-Aff">Additional Aff Explanation and Examples</a></li>
 </ul>
-<h2><a class="header" href="#a-http-client" id="a-http-client">A HTTP Client</a></h2>
-<p>The <code>affjax</code> library offers a convenient way to make asynchronous AJAX HTTP requests with <code>Aff</code>. Consult the <a href="https://pursuit.purescript.org/packages/purescript-affjax">Affjax docs</a> for more usage information. Here is an example that makes HTTP GET requests at a provided URL and returns the response body or an error message:</p>
-<pre><code class="language-hs">import Prelude
-import Affjax as AX
-import Affjax.ResponseFormat as ResponseFormat
-import Data.Either (Either(..))
-import Effect.Aff (Aff)
-
-getUrl :: String -&gt; Aff String
-getUrl url = do
-  result &lt;- AX.get ResponseFormat.string url
-  pure $ case result of
-    Left err -&gt; &quot;GET /api response failed to decode: &quot; &lt;&gt; AX.printError err
-    Right response -&gt; response.body
+<h2 id="a-http-client"><a class="header" href="#a-http-client">A HTTP Client</a></h2>
+<p>The <code>affjax</code> library offers a convenient way to make asynchronous AJAX HTTP requests with <code>Aff</code>. Depending on what environment you are targeting you need to use either the <a href="https://github.com/purescript-contrib/purescript-affjax-web">purescript-affjax-web</a> or the <a href="https://github.com/purescript-contrib/purescript-affjax-node">purescript-affjax-node</a> library.
+In the rest of this chapter we will be targeting node and thus using <code>purescript-affjax-node</code>.
+Consult the <a href="https://pursuit.purescript.org/packages/purescript-affjax">Affjax docs</a> for more usage information. Here is an example that makes HTTP GET requests at a provided URL and returns the response body or an error message:</p>
+<pre><code class="language-hs">
 </code></pre>
 <p>When calling this in the repl, <code>launchAff_</code> is required to convert the <code>Aff</code> to a repl-compatible <code>Effect</code>:</p>
 <pre><code class="language-shell">$ spago repl
@@ -279,7 +222,7 @@ getUrl url = do
 … import Prelude
 … import Effect.Aff (launchAff_)
 … import Effect.Class.Console (log)
-… import Test.ExamplesHTTP (getUrl)
+… import Test.HTTP (getUrl)
 …
 … launchAff_ do
 …   str &lt;- getUrl &quot;https://reqres.in/api/users/1&quot;
@@ -288,11 +231,11 @@ getUrl url = do
 unit
 {&quot;data&quot;:{&quot;id&quot;:1,&quot;email&quot;:&quot;george.bluth@reqres.in&quot;,&quot;first_name&quot;:&quot;George&quot;,&quot;last_name&quot;:&quot;Bluth&quot;, ...}}
 </code></pre>
-<h2><a class="header" href="#exercises-1" id="exercises-1">Exercises</a></h2>
+<h2 id="exercises-1"><a class="header" href="#exercises-1">Exercises</a></h2>
 <ol>
 <li>(Easy) Write a function <code>writeGet</code> which makes an HTTP <code>GET</code> request to a provided url, and writes the response body to a file.</li>
 </ol>
-<h2><a class="header" href="#parallel-computations" id="parallel-computations">Parallel Computations</a></h2>
+<h2 id="parallel-computations"><a class="header" href="#parallel-computations">Parallel Computations</a></h2>
 <p>We've seen how to use the <code>Aff</code> monad and do notation to compose asynchronous computations in sequence. It would also be useful to be able to compose asynchronous computations <em>in parallel</em>. With <code>Aff</code>, we can compute in parallel simply by initiating our two computations one after the other.</p>
 <p>The <code>parallel</code> package defines a type class <code>Parallel</code> for monads like <code>Aff</code> which support parallel execution. When we met applicative functors earlier in the book, we observed how applicative functors can be useful for combining parallel computations. In fact, an instance for <code>Parallel</code> defines a correspondence between a monad <code>m</code> (such as <code>Aff</code>) and an applicative functor <code>f</code> which can be used to combine computations in parallel:</p>
 <pre><code class="language-hs">class (Monad m, Applicative f) &lt;= Parallel f m | m -&gt; f, f -&gt; m where
@@ -309,23 +252,8 @@ unit
 <p>We can also combine parallel computations with sequential portions of code, by using applicative combinators in a do notation block, or vice versa, using <code>parallel</code> and <code>sequential</code> to change type constructors where appropriate.</p>
 <p>To demonstrate the difference between sequential and parallel execution, we'll create an array of 100 10-millisecond delays, then execute those delays with both techniques.
 You'll notice in the repl that <code>seqDelay</code> is much slower than <code>parDelay</code>.
-Note that parallel execution is enabled by simply by replacing <code>sequence_</code> with <code>parSequence_</code>.</p>
-<pre><code class="language-hs">import Prelude
-
-import Control.Parallel (parSequence_)
-import Data.Array (replicate)
-import Data.Foldable (sequence_)
-import Effect (Effect)
-import Effect.Aff (Aff, Milliseconds(..), delay, launchAff_)
-
-delayArray :: Array (Aff Unit)
-delayArray = replicate 100 $ delay $ Milliseconds 10.0
-
-seqDelay :: Effect Unit
-seqDelay = launchAff_ $ sequence_ delayArray
-
-parDelay :: Effect Unit
-parDelay = launchAff_ $ parSequence_ delayArray
+Note that parallel execution is enabled by simply replacing <code>sequence_</code> with <code>parSequence_</code>.</p>
+<pre><code class="language-hs">
 </code></pre>
 <pre><code class="language-shell">$ spago repl
 
@@ -338,22 +266,7 @@ unit
 unit
 </code></pre>
 <p>Here's a more real-world example of making multiple HTTP requests in parallel. We're reusing our <code>getUrl</code> function to fetch information from two users in parallel. Note that <code>parTraverse</code> (the parallel version of <code>traverse</code>) is used in this case. This example would also work fine with <code>traverse</code> instead, but it will be slower.</p>
-<pre><code class="language-hs">import Prelude
-
-import Control.Parallel (parTraverse)
-import Effect (Effect)
-import Effect.Aff (launchAff_)
-import Effect.Class.Console (logShow)
-import Test.HTTP (getUrl)
-
-fetchPar :: Effect Unit
-fetchPar =
-  launchAff_
-    $ do
-        let
-          urls = map (\n -&gt; &quot;https://reqres.in/api/users/&quot; &lt;&gt; show n) [ 1, 2 ]
-        res &lt;- parTraverse getUrl urls
-        logShow res
+<pre><code class="language-hs">
 </code></pre>
 <pre><code class="language-shell">$ spago repl
 
@@ -366,7 +279,7 @@ unit
 ]
 </code></pre>
 <p>A full listing of available parallel functions can be found in the <a href="https://pursuit.purescript.org/packages/purescript-parallel/docs/Control.Parallel"><code>parallel</code> docs on Pursuit</a>. The <a href="https://github.com/purescript-contrib/purescript-aff#parallel-execution">aff docs section on parallel</a> also contains more examples.</p>
-<h2><a class="header" href="#exercises-2" id="exercises-2">Exercises</a></h2>
+<h2 id="exercises-2"><a class="header" href="#exercises-2">Exercises</a></h2>
 <ol>
 <li>
 <p>(Easy) Write a <code>concatenateManyParallel</code> function which has the same signature as the earlier <code>concatenateMany</code> function, but reads all input files in parallel.</p>
@@ -403,7 +316,7 @@ $ cat c/a/a.txt
 <p>The expected output is:</p>
 <pre><code class="language-hs">[&quot;root.txt&quot;,&quot;a.txt&quot;,&quot;b/a.txt&quot;,&quot;b/b.txt&quot;,&quot;b/c/a.txt&quot;,&quot;c/a/a.txt&quot;]
 </code></pre>
-<h2><a class="header" href="#conclusion" id="conclusion">Conclusion</a></h2>
+<h2 id="conclusion"><a class="header" href="#conclusion">Conclusion</a></h2>
 <p>In this chapter we covered asynchronous effects and learned how to:</p>
 <ul>
 <li>Run asynchronous code in the <code>Aff</code> monad with the <code>aff</code> library.</li>
@@ -415,67 +328,38 @@ $ cat c/a/a.txt
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                        
                             <a rel="prev" href="chapter8.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                        
-
-                        
                             <a rel="next" href="chapter10.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
-                        
-
                         <div style="clear: both"></div>
                     </nav>
                 </div>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                
                     <a rel="prev" href="chapter8.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                
-
-                
                     <a rel="next" href="chapter10.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
-                
             </nav>
 
         </div>
 
-        
-
-        
-
-        
-
-        
         <script type="text/javascript">
             window.playground_copyable = true;
         </script>
-        
-
-        
-
-        
         <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
-        
-
         <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
         <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
-        
-
-        
-
     </body>
 </html>

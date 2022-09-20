@@ -4,47 +4,27 @@
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Functions and Records - PureScript by Example</title>
-        
-        
-
-
         <!-- Custom HTML head -->
-        
-
-
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
-        
         <link rel="icon" href="favicon.svg">
-        
-        
         <link rel="shortcut icon" href="favicon.png">
-        
         <link rel="stylesheet" href="css/variables.css">
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
-        
         <link rel="stylesheet" href="css/print.css" media="print">
-        
-
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        
         <link rel="stylesheet" href="fonts/fonts.css">
-        
-
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        
-
-        
     </head>
     <body>
         <!-- Provide site root to javascript -->
@@ -103,7 +83,6 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                
                 <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky bordered">
                     <div class="left-buttons">
@@ -120,33 +99,26 @@
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                         </ul>
-                        
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
-                        
                     </div>
 
                     <h1 class="menu-title">PureScript by Example</h1>
 
                     <div class="right-buttons">
-                        
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
-                        
-                        
                         <a href="https://github.com/purescript-contrib/purescript-book" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        
                     </div>
                 </div>
 
-                
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -154,8 +126,6 @@
                         </ul>
                     </div>
                 </div>
-                
-
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
                 <script type="text/javascript">
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
@@ -167,20 +137,14 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#functions-and-records" id="functions-and-records">Functions and Records</a></h1>
-<h2><a class="header" href="#chapter-goals" id="chapter-goals">Chapter Goals</a></h2>
+                        <h1 id="functions-and-records"><a class="header" href="#functions-and-records">Functions and Records</a></h1>
+<h2 id="chapter-goals"><a class="header" href="#chapter-goals">Chapter Goals</a></h2>
 <p>This chapter will introduce two building blocks of PureScript programs: functions and records. In addition, we'll see how to structure PureScript programs, and how to use types as an aid to program development.</p>
 <p>We will build a simple address book application to manage a list of contacts. This code will introduce some new ideas from the syntax of PureScript.</p>
 <p>The front-end of our application will be the interactive mode PSCi, but it would be possible to build on this code to write a front-end in JavaScript. In fact, we will do exactly that in later chapters, adding form validation and save/restore functionality.</p>
-<h2><a class="header" href="#project-setup" id="project-setup">Project Setup</a></h2>
+<h2 id="project-setup"><a class="header" href="#project-setup">Project Setup</a></h2>
 <p>The source code for this chapter is contained in the file <code>src/Data/AddressBook.purs</code>. This file starts with a module declaration and its import list:</p>
-<pre><code class="language-haskell">module Data.AddressBook where
-
-import Prelude
-
-import Control.Plus (empty)
-import Data.List (List(..), filter, head)
-import Data.Maybe (Maybe)
+<pre><code class="language-haskell">
 </code></pre>
 <p>Here, we import several modules:</p>
 <ul>
@@ -193,7 +157,7 @@ import Data.Maybe (Maybe)
 <pre><code class="language-text">$ cd chapter3
 $ spago build
 </code></pre>
-<h2><a class="header" href="#simple-types" id="simple-types">Simple Types</a></h2>
+<h2 id="simple-types"><a class="header" href="#simple-types">Simple Types</a></h2>
 <p>PureScript defines three built-in types which correspond to JavaScript's primitive types: numbers, strings and booleans. These are defined in the <code>Prim</code> module, which is implicitly imported by every module. They are called <code>Number</code>, <code>String</code>, and <code>Boolean</code>, respectively, and you can see them in PSCi by using the <code>:type</code> command to print the types of some simple values:</p>
 <pre><code class="language-text">$ spago repl
 
@@ -264,7 +228,7 @@ add x y = x + y
 <pre><code class="language-text">&gt; add 10 20
 30
 </code></pre>
-<h2><a class="header" href="#quantified-types" id="quantified-types">Quantified Types</a></h2>
+<h2 id="quantified-types"><a class="header" href="#quantified-types">Quantified Types</a></h2>
 <p>In the previous section, we saw the types of some functions defined in the Prelude. For example, the <code>flip</code> function had the following type:</p>
 <pre><code class="language-text">&gt; :type flip
 forall a b c. (a -&gt; b -&gt; c) -&gt; b -&gt; a -&gt; c
@@ -283,7 +247,7 @@ forall a b c. (a -&gt; b -&gt; c) -&gt; b -&gt; a -&gt; c
 
 Could not match type Int with type String
 </code></pre>
-<h2><a class="header" href="#notes-on-indentation" id="notes-on-indentation">Notes On Indentation</a></h2>
+<h2 id="notes-on-indentation"><a class="header" href="#notes-on-indentation">Notes On Indentation</a></h2>
 <p>PureScript code is <em>indentation-sensitive</em>, just like Haskell, but unlike JavaScript. This means that the whitespace in your code is not meaningless, but rather is used to group regions of code, just like curly braces in C-like languages.</p>
 <p>If a declaration spans multiple lines, then any lines except the first must be indented past the indentation level of the first line.</p>
 <p>Therefore, the following is valid PureScript code:</p>
@@ -315,27 +279,19 @@ y + z
 </code></pre>
 <p>Note how the declarations for <code>foo</code> and <code>bar</code> are indented past the declaration of <code>example</code>.</p>
 <p>The only exception to this rule is the <code>where</code> keyword in the initial <code>module</code> declaration at the top of a source file.</p>
-<h2><a class="header" href="#defining-our-types" id="defining-our-types">Defining Our Types</a></h2>
+<h2 id="defining-our-types"><a class="header" href="#defining-our-types">Defining Our Types</a></h2>
 <p>A good first step when tackling a new problem in PureScript is to write out type definitions for any values you will be working with. First, let's define a type for records in our address book:</p>
-<pre><code class="language-haskell">type Entry =
-  { firstName :: String
-  , lastName  :: String
-  , address   :: Address
-  }
+<pre><code class="language-haskell">
 </code></pre>
 <p>This defines a <em>type synonym</em> called <code>Entry</code> - the type <code>Entry</code> is equivalent to the type on the right of the equals symbol: a record type with three fields - <code>firstName</code>, <code>lastName</code> and <code>address</code>. The two name fields will have type <code>String</code>, and the <code>address</code> field will have type <code>Address</code>, defined as follows:</p>
-<pre><code class="language-haskell">type Address =
-  { street :: String
-  , city   :: String
-  , state  :: String
-  }
+<pre><code class="language-haskell">
 </code></pre>
 <p>Note that records can contain other records.</p>
 <p>Now let's define a third type synonym, for our address book data structure, which will be represented simply as a linked list of entries:</p>
-<pre><code class="language-haskell">type AddressBook = List Entry
+<pre><code class="language-haskell">
 </code></pre>
 <p>Note that <code>List Entry</code> is not the same as <code>Array Entry</code>, which represents an <em>array</em> of entries.</p>
-<h2><a class="header" href="#type-constructors-and-kinds" id="type-constructors-and-kinds">Type Constructors and Kinds</a></h2>
+<h2 id="type-constructors-and-kinds"><a class="header" href="#type-constructors-and-kinds">Type Constructors and Kinds</a></h2>
 <p><code>List</code> is an example of a <em>type constructor</em>. Values do not have the type <code>List</code> directly, but rather <code>List a</code> for some type <code>a</code>. That is, <code>List</code> takes a <em>type argument</em> <code>a</code> and <em>constructs</em> a new type <code>List a</code>.</p>
 <p>Note that just like function application, type constructors are applied to other types simply by juxtaposition: the type <code>List Entry</code> is in fact the type constructor <code>List</code> <em>applied</em> to the type <code>Entry</code> - it represents a list of entries.</p>
 <p>If we try to incorrectly define a value of type <code>List</code> (by using the type annotation operator <code>::</code>), we will see a new type of error:</p>
@@ -358,23 +314,18 @@ Type -&gt; Type
 Type
 </code></pre>
 <p>PureScript's <em>kind system</em> supports other interesting kinds, which we will see later in the book.</p>
-<h2><a class="header" href="#displaying-address-book-entries" id="displaying-address-book-entries">Displaying Address Book Entries</a></h2>
+<h2 id="displaying-address-book-entries"><a class="header" href="#displaying-address-book-entries">Displaying Address Book Entries</a></h2>
 <p>Let's write our first function, which will render an address book entry as a string. We start by giving the function a type. This is optional, but good practice, since it acts as a form of documentation. In fact, the PureScript compiler will give a warning if a top-level declaration does not contain a type annotation. A type declaration separates the name of a function from its type with the <code>::</code> symbol:</p>
-<pre><code class="language-haskell">showEntry :: Entry -&gt; String
+<pre><code class="language-haskell">
 </code></pre>
 <p>This type signature says that <code>showEntry</code> is a function, which takes an <code>Entry</code> as an argument and returns a <code>String</code>. Here is the code for <code>showEntry</code>:</p>
-<pre><code class="language-haskell">showEntry entry = entry.lastName &lt;&gt; &quot;, &quot; &lt;&gt;
-                  entry.firstName &lt;&gt; &quot;: &quot; &lt;&gt;
-                  showAddress entry.address
+<pre><code class="language-haskell">
 </code></pre>
 <p>This function concatenates the three fields of the <code>Entry</code> record into a single string, using the <code>showAddress</code> function to turn the record inside the <code>address</code> field into a <code>String</code>. <code>showAddress</code> is defined similarly:</p>
-<pre><code class="language-haskell">showAddress :: Address -&gt; String
-showAddress addr = addr.street &lt;&gt; &quot;, &quot; &lt;&gt;
-                   addr.city &lt;&gt; &quot;, &quot; &lt;&gt;
-                   addr.state
+<pre><code class="language-haskell">
 </code></pre>
 <p>A function definition begins with the name of the function, followed by a list of argument names. The result of the function is specified after the equals sign. Fields are accessed with a dot, followed by the field name. In PureScript, string concatenation uses the diamond operator (<code>&lt;&gt;</code>), instead of the plus operator like in JavaScript.</p>
-<h2><a class="header" href="#test-early-test-often" id="test-early-test-often">Test Early, Test Often</a></h2>
+<h2 id="test-early-test-often"><a class="header" href="#test-early-test-often">Test Early, Test Often</a></h2>
 <p>The PSCi interactive mode allows for rapid prototyping with immediate feedback, so let's use it to verify that our first few functions behave as expected.</p>
 <p>First, build the code you've written:</p>
 <pre><code class="language-text">$ spago build
@@ -398,13 +349,12 @@ showAddress addr = addr.street &lt;&gt; &quot;, &quot; &lt;&gt;
 
 &quot;Smith, John: 123 Fake St., Faketown, CA&quot;
 </code></pre>
-<h2><a class="header" href="#creating-address-books" id="creating-address-books">Creating Address Books</a></h2>
+<h2 id="creating-address-books"><a class="header" href="#creating-address-books">Creating Address Books</a></h2>
 <p>Now let's write some utility functions for working with address books. We will need a value which represents an empty address book: an empty list.</p>
-<pre><code class="language-haskell">emptyBook :: AddressBook
-emptyBook = empty
+<pre><code class="language-haskell">
 </code></pre>
 <p>We will also need a function for inserting a value into an existing address book. We will call this function <code>insertEntry</code>. Start by giving its type:</p>
-<pre><code class="language-haskell">insertEntry :: Entry -&gt; AddressBook -&gt; AddressBook
+<pre><code class="language-haskell">
 </code></pre>
 <p>This type signature says that <code>insertEntry</code> takes an <code>Entry</code> as its first argument, and an <code>AddressBook</code> as a second argument, and returns a new <code>AddressBook</code>.</p>
 <p>We don't modify the existing <code>AddressBook</code> directly. Instead, we return a new <code>AddressBook</code> which contains the same data. As such, <code>AddressBook</code> is an example of an <em>immutable data structure</em>. This is an important idea in PureScript - mutation is a side-effect of code, and inhibits our ability to reason effectively about its behavior, so we prefer pure functions and immutable data where possible.</p>
@@ -422,12 +372,12 @@ forall a. a -&gt; List a -&gt; List a
 <p>But <code>List Entry</code> is the same as <code>AddressBook</code>, so this is equivalent to</p>
 <pre><code class="language-haskell">Entry -&gt; AddressBook -&gt; AddressBook
 </code></pre>
-<p>In our case, we already have the appropriate inputs: an <code>Entry</code>, and a <code>AddressBook</code>, so can apply <code>Cons</code> and get a new <code>AddressBook</code>, which is exactly what we wanted!</p>
+<p>In our case, we already have the appropriate inputs: an <code>Entry</code>, and an <code>AddressBook</code>, so can apply <code>Cons</code> and get a new <code>AddressBook</code>, which is exactly what we wanted!</p>
 <p>Here is our implementation of <code>insertEntry</code>:</p>
 <pre><code class="language-haskell">insertEntry entry book = Cons entry book
 </code></pre>
 <p>This brings the two arguments <code>entry</code> and <code>book</code> into scope, on the left hand side of the equals symbol, and then applies the <code>Cons</code> function to create the result.</p>
-<h2><a class="header" href="#curried-functions" id="curried-functions">Curried Functions</a></h2>
+<h2 id="curried-functions"><a class="header" href="#curried-functions">Curried Functions</a></h2>
 <p>Functions in PureScript take exactly one argument. While it looks like the <code>insertEntry</code> function takes two arguments, it is in fact an example of a <em>curried function</em>.</p>
 <p>The <code>-&gt;</code> operator in the type of <code>insertEntry</code> associates to the right, which means that the compiler parses the type as</p>
 <pre><code class="language-haskell">Entry -&gt; (AddressBook -&gt; AddressBook)
@@ -447,7 +397,8 @@ AddressBook
 AddressBook
 </code></pre>
 <p>This is because function application associates to the left, and this explains why we can just specify function arguments one after the other, separated by whitespace.</p>
-<p>Note that in the rest of the book, I will talk about things like &quot;functions of two arguments&quot;. However, it is to be understood that this means a curried function, taking a first argument and returning another function.</p>
+<p>The <code>-&gt;</code> operator in function types is a <em>type constructor</em> for functions. It takes two type arguments, the function's argument type and the return type. The left and right operands respectively.</p>
+<p>Note that in the rest of the book, I will talk about things like &quot;functions of two arguments&quot;. However, it is to be understood that this means a curried function, taking a first argument and returning a function that takes the second.</p>
 <p>Now consider the definition of <code>insertEntry</code>:</p>
 <pre><code class="language-haskell">insertEntry :: Entry -&gt; AddressBook -&gt; AddressBook
 insertEntry entry book = Cons entry book
@@ -457,16 +408,15 @@ insertEntry entry book = Cons entry book
 insertEntry entry = Cons entry
 </code></pre>
 <p>But now, by the same argument, we can remove <code>entry</code> from both sides:</p>
-<pre><code class="language-haskell">insertEntry :: Entry -&gt; AddressBook -&gt; AddressBook
-insertEntry = Cons
+<pre><code class="language-haskell">
 </code></pre>
 <p>This process is called <em>eta conversion</em>, and can be used (along with some other techniques) to rewrite functions in <em>point-free form</em>, which means functions defined without reference to their arguments.</p>
 <p>In the case of <code>insertEntry</code>, <em>eta conversion</em> has resulted in a very clear definition of our function - &quot;<code>insertEntry</code> is just cons on lists&quot;. However, it is arguable whether point-free form is better in general.</p>
-<h2><a class="header" href="#property-accessors" id="property-accessors">Property Accessors</a></h2>
+<h2 id="property-accessors"><a class="header" href="#property-accessors">Property Accessors</a></h2>
 <p>One common pattern is to use a function to access individual fields (or &quot;properties&quot;) of a record. An inline function to extract an <code>Address</code> from an <code>Entry</code> could be written as:</p>
 <pre><code class="language-haskell">\entry -&gt; entry.address
 </code></pre>
-<p>PureScript also allows <a href="https://github.com/purescript/documentation/blob/master/language/Syntax.md#property-accessors"><em>property accessor</em></a> shorthand, where an underscore acts as the anonymous fuction argument, so the inline function above is equivalent to:</p>
+<p>PureScript also allows <a href="https://github.com/purescript/documentation/blob/master/language/Syntax.md#property-accessors"><em>property accessor</em></a> shorthand, where an underscore acts as the anonymous function argument, so the inline function above is equivalent to:</p>
 <pre><code class="language-haskell">_.address
 </code></pre>
 <p>This works with any number of levels or properties, so a function to extract the city associated with an <code>Entry</code> could be written as:</p>
@@ -481,7 +431,7 @@ insertEntry = Cons
 &gt; _.address.city entry
 &quot;Faketown&quot;
 </code></pre>
-<h2><a class="header" href="#querying-the-address-book" id="querying-the-address-book">Querying the Address Book</a></h2>
+<h2 id="querying-the-address-book"><a class="header" href="#querying-the-address-book">Querying the Address Book</a></h2>
 <p>The last function we need to implement for our minimal address book application will look up a person by name and return the correct <code>Entry</code>. This will be a nice application of building programs by composing small functions - a key idea from functional programming.</p>
 <p>We can first filter the address book, keeping only those entries with the correct first and last names. Then we can simply return the head (i.e. first) element of the resulting list.</p>
 <p>With this high-level specification of our approach, we can calculate the type of our function. First open PSCi, and find the types of the <code>filter</code> and <code>head</code> functions:</p>
@@ -507,7 +457,7 @@ head :: AddressBook -&gt; Maybe Entry
 <p>We know that we will need to pass the first and last names that we want to search for, as arguments to our function.</p>
 <p>We also know that we will need a function to pass to <code>filter</code>. Let's call this function <code>filterEntry</code>. <code>filterEntry</code> will have type <code>Entry -&gt; Boolean</code>. The application <code>filter filterEntry</code> will then have type <code>AddressBook -&gt; AddressBook</code>. If we pass the result of this function to the <code>head</code> function, we get our result of type <code>Maybe Entry</code>.</p>
 <p>Putting these facts together, a reasonable type signature for our function, which we will call <code>findEntry</code>, is:</p>
-<pre><code class="language-haskell">findEntry :: String -&gt; String -&gt; AddressBook -&gt; Maybe Entry
+<pre><code class="language-haskell">
 </code></pre>
 <p>This type signature says that <code>findEntry</code> takes two strings, the first and last names, and a <code>AddressBook</code>, and returns an optional <code>Entry</code>. The optional result will contain a value only if the name is found in the address book.</p>
 <p>And here is the definition of <code>findEntry</code>:</p>
@@ -517,11 +467,11 @@ head :: AddressBook -&gt; Maybe Entry
     filterEntry entry = entry.firstName == firstName &amp;&amp; entry.lastName == lastName
 </code></pre>
 <p>Let's go over this code step by step.</p>
-<p><code>findEntry</code> brings three names into scope: <code>firstName</code>, and <code>lastName</code>, both representing strings, and <code>book</code>, an <code>AddressBook</code>.</p>
+<p><code>findEntry</code> brings three names into scope: <code>firstName</code> and <code>lastName</code>, both representing strings, and <code>book</code>, an <code>AddressBook</code>.</p>
 <p>The right hand side of the definition combines the <code>filter</code> and <code>head</code> functions: first, the list of entries is filtered, and the <code>head</code> function is applied to the result.</p>
 <p>The predicate function <code>filterEntry</code> is defined as an auxiliary declaration inside a <code>where</code> clause. This way, the <code>filterEntry</code> function is available inside the definition of our function, but not outside it. Also, it can depend on the arguments to the enclosing function, which is essential here because <code>filterEntry</code> uses the <code>firstName</code> and <code>lastName</code> arguments to filter the specified <code>Entry</code>.</p>
 <p>Note that, just like for top-level declarations, it was not necessary to specify a type signature for <code>filterEntry</code>. However, doing so is recommended as a form of documentation.</p>
-<h2><a class="header" href="#infix-function-application" id="infix-function-application">Infix Function Application</a></h2>
+<h2 id="infix-function-application"><a class="header" href="#infix-function-application">Infix Function Application</a></h2>
 <p>Most of the functions discussed so far used <em>prefix</em> function application, where the function name was put <em>before</em> the arguments. For example, when using the <code>insertEntry</code> function to add an <code>Entry</code> (<code>john</code>) to an empty <code>AddressBook</code>, we might write:</p>
 <pre><code class="language-haskell">&gt; book1 = insertEntry john emptyBook
 </code></pre>
@@ -533,7 +483,7 @@ head :: AddressBook -&gt; Maybe Entry
 <pre><code class="language-text">&gt; mod 8 3
 2
 </code></pre>
-<p>This is fine, but doesn't line up with common usage (in conversation, one might say &quot;eight mod three&quot;). Wrapping a prefix function in backticks (`) lets you use that it in infix position as an operator, e.g.,</p>
+<p>The above usage works fine, but is awkward to read. A more familiar phrasing is &quot;eight mod three&quot;, which you can achieve by wrapping a prefix function in backticks (`):</p>
 <pre><code class="language-text">&gt; 8 `mod` 3
 2
 </code></pre>
@@ -559,7 +509,7 @@ book4 = john `insertEntry` (peggy `insertEntry` (ned `insertEntry` emptyBook))
 <pre><code class="language-haskell">book7 = insertEntry john $ insertEntry peggy $ insertEntry ned emptyBook
 </code></pre>
 <p>Substituting <code>$</code> for parens is usually easier to type and (arguably) easier to read. A mnemonic to remember the meaning of this symbol is to think of the dollar sign as being drawn from two parens that are also being crossed-out, suggesting the parens are now unnecessary.</p>
-<p>Note that <code>$</code> isn't special syntax that's hardcoded into the language. It's simply the infix operator for a regular function called <code>apply</code>, which is defined in the Prelude as follows:</p>
+<p>Note that <code>$</code> isn't special syntax that's hardcoded into the language. It's simply the infix operator for a regular function called <code>apply</code>, which is defined in <code>Data.Function</code> as follows:</p>
 <pre><code class="language-haskell">apply :: forall a b. (a -&gt; b) -&gt; a -&gt; b
 apply f x = f x
 
@@ -592,7 +542,7 @@ add5   = \x -&gt; 5 + x
 add5   = (5 + _)
 add5 x = 5 `(+)` x  -- Yo Dawg, I herd you like infix, so we put infix in your infix!
 </code></pre>
-<h2><a class="header" href="#function-composition" id="function-composition">Function Composition</a></h2>
+<h2 id="function-composition"><a class="header" href="#function-composition">Function Composition</a></h2>
 <p>Just like we were able to simplify the <code>insertEntry</code> function by using eta conversion, we can simplify the definition of <code>findEntry</code> by reasoning about its arguments.</p>
 <p>Note that the <code>book</code> argument is passed to the <code>filter filterEntry</code> function, and the result of this application is passed to <code>head</code>. In other words, <code>book</code> is passed to the <em>composition</em> of the functions <code>filter filterEntry</code> and <code>head</code>.</p>
 <p>In PureScript, the function composition operators are <code>&lt;&lt;&lt;</code> and <code>&gt;&gt;&gt;</code>. The first is &quot;backwards composition&quot;, and the second is &quot;forwards composition&quot;.</p>
@@ -600,8 +550,7 @@ add5 x = 5 `(+)` x  -- Yo Dawg, I herd you like infix, so we put infix in your i
 <pre><code>(head &lt;&lt;&lt; filter filterEntry) book
 </code></pre>
 <p>In this form, we can apply the eta conversion trick from earlier, to arrive at the final form of <code>findEntry</code>:</p>
-<pre><code class="language-haskell">findEntry firstName lastName = head &lt;&lt;&lt; filter filterEntry
-  where
+<pre><code class="language-haskell">
     ...
 </code></pre>
 <p>An equally valid right-hand side would be:</p>
@@ -609,7 +558,7 @@ add5 x = 5 `(+)` x  -- Yo Dawg, I herd you like infix, so we put infix in your i
 </code></pre>
 <p>Either way, this gives a clear definition of the <code>findEntry</code> function: &quot;<code>findEntry</code> is the composition of a filtering function and the <code>head</code> function&quot;.</p>
 <p>I will let you make your own decision which definition is easier to understand, but it is often useful to think of functions as building blocks in this way - each function executing a single task, and solutions assembled using function composition.</p>
-<h2><a class="header" href="#exercises" id="exercises">Exercises</a></h2>
+<h2 id="exercises"><a class="header" href="#exercises">Exercises</a></h2>
 <ol>
 <li>(Easy) Test your understanding of the <code>findEntry</code> function by writing down the types of each of its major subexpressions. For example, the type of the <code>head</code> function as used is specialized to <code>AddressBook -&gt; Maybe Entry</code>. <em>Note</em>: There is no test for this exercise.</li>
 <li>(Medium) Write a function <code>findEntryByStreet :: String -&gt; AddressBook -&gt; Maybe Entry</code> which looks up an <code>Entry</code> given a street address. <em>Hint</em> reusing the existing code in <code>findEntry</code>. Test your function in PSCi and by running <code>spago test</code>.</li>
@@ -617,7 +566,7 @@ add5 x = 5 `(+)` x  -- Yo Dawg, I herd you like infix, so we put infix in your i
 <li>(Medium) Write a function <code>isInBook</code> which tests whether a name appears in a <code>AddressBook</code>, returning a Boolean value. <em>Hint</em>: Use PSCi to find the type of the <code>Data.List.null</code> function, which tests whether a list is empty or not.</li>
 <li>(Difficult) Write a function <code>removeDuplicates</code> which removes &quot;duplicate&quot; address book entries. We'll consider entries duplicated if they share the same first and last names, while ignoring <code>address</code> fields. <em>Hint</em>: Use PSCi to find the type of the <code>Data.List.nubByEq</code> function, which removes duplicate elements from a list based on an equality predicate. Note that the first element in each set of duplicates (closest to list head) is the one that is kept.</li>
 </ol>
-<h2><a class="header" href="#conclusion" id="conclusion">Conclusion</a></h2>
+<h2 id="conclusion"><a class="header" href="#conclusion">Conclusion</a></h2>
 <p>In this chapter, we covered several new functional programming concepts:</p>
 <ul>
 <li>How to use the interactive mode PSCi to experiment with functions and test ideas.</li>
@@ -634,67 +583,38 @@ add5 x = 5 `(+)` x  -- Yo Dawg, I herd you like infix, so we put infix in your i
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                        
                             <a rel="prev" href="chapter2.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                        
-
-                        
                             <a rel="next" href="chapter4.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
-                        
-
                         <div style="clear: both"></div>
                     </nav>
                 </div>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                
                     <a rel="prev" href="chapter2.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                
-
-                
                     <a rel="next" href="chapter4.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
-                
             </nav>
 
         </div>
 
-        
-
-        
-
-        
-
-        
         <script type="text/javascript">
             window.playground_copyable = true;
         </script>
-        
-
-        
-
-        
         <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
-        
-
         <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
         <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
-        
-
-        
-
     </body>
 </html>
