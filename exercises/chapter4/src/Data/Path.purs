@@ -18,6 +18,17 @@ data Path
 instance showPath :: Show Path where
   show = filename
 
+instance Eq Path where
+  eq (File _ a) (File _ b) = a == b
+  eq _ _ = false
+
+instance Eq Path => Ord Path where
+  compare (File _ a) (File _ b)
+    | a < b = LT
+    | a > b = GT
+    | otherwise = EQ
+  compare _ _ = EQ
+
 root :: Path
 root =
   Directory "/"

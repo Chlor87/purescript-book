@@ -25,14 +25,15 @@ factorial n = n * factorial (n - 1)
 binomial :: Int -> Int -> Int
 binomial _ 0 = 1
 binomial 0 _ = 0
-binomial n k | n < k = 0
+binomial n k
+  | n < k = 0
   | otherwise = factorial n / (factorial k * (factorial (n - k)))
 
 pascal :: Int -> Int -> Int
 pascal _ 0 = 1
 pascal 0 _ = 0
-pascal n k
-  = pascal (n-1) k + pascal (n - 1) (k - 1)
+pascal n k = pascal (n - 1) k + pascal (n - 1) (k - 1)
+
 {-
 Most general type for sameCity and livesInLA functions taking into account row polymorphism:
 
@@ -52,7 +53,7 @@ sameCity { address: { city: c1 } } { address: { city: c2 } }
   | otherwise = false
 
 fromSingleton :: forall a. a -> Array a -> a
-fromSingleton a [b] = b
+fromSingleton a [ b ] = b
 fromSingleton a _ = a
 
 circleAtOrigin :: Shape
@@ -71,7 +72,7 @@ scaleShape i (Circle c r) = Circle c (r * i)
 scaleShape i (Rectangle c w h) = Rectangle c (w * i) (h * i)
 scaleShape i (Line s e) = Line (s * scale) (e * scale)
   where
-  scale = {x: i, y: i}
+  scale = { x: i, y: i }
 scaleShape i text = text
 
 doubleScaleAndCenter :: Shape -> Shape

@@ -17,14 +17,14 @@ main :: Effect Unit
 main =
   runTest do
     runChapterExamples
-    {-  Move this block comment starting point to enable more tests
     suite "Show Me!" do
       test "Show Point" do
         Assert.equal "(1.0, 2.0)"
           $ show
-          $ Point {x: 1.0, y: 2.0}
+          $ Point { x: 1.0, y: 2.0 }
+
     suite "Common Type Classes" do
-      let cpx real imaginary = Complex {real, imaginary}
+      let cpx real imaginary = Complex { real, imaginary }
       suite "Show Complex" do
         test "possitve imaginary" do
           Assert.equal "1.0+2.0i"
@@ -34,6 +34,7 @@ main =
           Assert.equal "1.0-2.0i"
             $ show
             $ cpx 1.0 (-2.0)
+
       suite "Eq Complex" do
         test "equal" do
           Assert.equal (cpx 1.0 2.0)
@@ -41,7 +42,8 @@ main =
         test "not equal" do
           Assert.expectFailure "should not be equal"
             $ Assert.equal (cpx 5.0 2.0)
-              $ cpx 1.0 2.0
+            $ cpx 1.0 2.0
+
       suite "Semiring Complex" do
         test "add" do
           Assert.equal (cpx 4.0 6.0)
@@ -50,29 +52,37 @@ main =
         test "add zero" do
           Assert.equal v
             $ add v zero
+
         test "multiply" do
           Assert.equal (cpx (-5.0) 10.0)
             $ mul (cpx 1.0 2.0) (cpx 3.0 4.0)
         test "multiply one" do
           Assert.equal v
             $ mul v one
+
       suite "Ring Complex" do
         test "subtract" do
           Assert.equal (cpx 2.0 3.0)
             $ sub (cpx 3.0 5.0) (cpx 1.0 2.0)
+
       suite "Show Shape" do
         test "circle" do
           Assert.equal "(Circle (1.0, 2.0) 3.0)"
-            $ show $ Circle (Point {x: 1.0, y: 2.0}) 3.0
+            $ show
+            $ Circle (Point { x: 1.0, y: 2.0 }) 3.0
         test "rectangle" do
           Assert.equal "(Rectangle (1.0, 2.0) 3.0 4.0)"
-            $ show $ Rectangle (Point {x: 1.0, y: 2.0}) 3.0 4.0
+            $ show
+            $ Rectangle (Point { x: 1.0, y: 2.0 }) 3.0 4.0
         test "line" do
           Assert.equal "(Line (1.0, 2.0) (3.0, 4.0))"
-            $ show $ Line (Point {x: 1.0, y: 2.0}) (Point {x: 3.0, y: 4.0})
+            $ show
+            $ Line (Point { x: 1.0, y: 2.0 }) (Point { x: 3.0, y: 4.0 })
         test "text" do
           Assert.equal "(Text (1.0, 2.0) \"Hello\")"
-            $ show $ Text (Point {x: 1.0, y: 2.0}) "Hello"
+            $ show
+            $ Text (Point { x: 1.0, y: 2.0 }) "Hello"
+
     suite "Type Class Constraints" do
       suite "Eq NonEmpty" do
         test "equals" do
@@ -82,16 +92,19 @@ main =
           Assert.expectFailure "should not be equal"
             $ Assert.equal (NonEmpty 1 [ 2, 3 ])
             $ NonEmpty 2 [ 2, 3 ]
+
       suite "Semigroup NonEmpty" do
         test "append" do
           Assert.equal (NonEmpty 1 [ 2, 3, 4, 5, 6 ])
             $ NonEmpty 1 [ 2, 3 ]
-            <> NonEmpty 4 [ 5, 6 ]
+                <> NonEmpty 4 [ 5, 6 ]
+
       suite "Functor NonEmpty" do
         test "map" do
           Assert.equal (NonEmpty 10 [ 20, 30 ])
             $ map (_ * 10)
             $ NonEmpty 1 [ 2, 3 ]
+
       suite "Ord Extended" do
         -- Type annotation necessary to ensure there is an Ord instance for inner type (Int in this case)
         test "infinity equals infinity" do
@@ -116,11 +129,13 @@ main =
           Assert.equal LT
             $ compare (Finite 5)
             $ Finite 6
+
       suite "Foldable NonEmpty" do
         test "foldl" do
           Assert.equal 123
             $ foldl (\acc x -> acc * 10 + x) 0
             $ NonEmpty 1 [ 2, 3 ]
+
         test "foldr" do
           Assert.equal 321
             $ foldr (\x acc -> acc * 10 + x) 0
@@ -129,6 +144,7 @@ main =
           Assert.equal "123"
             $ foldMap (\x -> show x)
             $ NonEmpty 1 [ 2, 3 ]
+
       suite "Foldable OneMore" do
         test "foldl" do
           Assert.equal 123
@@ -142,29 +158,33 @@ main =
           Assert.equal "123"
             $ foldMap (\x -> show x)
             $ OneMore 1 (2 : 3 : Nil)
+
       let
         withDups =
-          [ Circle (Point {x: 1.0, y: 2.0}) 3.0
-          , Circle (Point {x: 3.0, y: 2.0}) 3.0
-          , Circle (Point {x: 1.0, y: 2.0}) 3.0
-          , Circle (Point {x: 2.0, y: 2.0}) 3.0
+          [ Circle (Point { x: 1.0, y: 2.0 }) 3.0
+          , Circle (Point { x: 3.0, y: 2.0 }) 3.0
+          , Circle (Point { x: 1.0, y: 2.0 }) 3.0
+          , Circle (Point { x: 2.0, y: 2.0 }) 3.0
           ]
         noDups =
-          [ Circle (Point {x: 1.0, y: 2.0}) 3.0
-          , Circle (Point {x: 3.0, y: 2.0}) 3.0
-          , Circle (Point {x: 2.0, y: 2.0}) 3.0
+          [ Circle (Point { x: 1.0, y: 2.0 }) 3.0
+          , Circle (Point { x: 3.0, y: 2.0 }) 3.0
+          , Circle (Point { x: 2.0, y: 2.0 }) 3.0
           ]
       test "dedupShapes" do
         Assert.equal noDups
           $ dedupShapes withDups
+
       test "dedupShapesFast" do
         Assert.equal noDups
           $ dedupShapesFast withDups
+
     suite "Multi Parameter Type Classes " do
       test "unsafeMaximum" do
         Assert.equal 42
           $ unsafePartial
           $ unsafeMaximum [ 1, 2, 42, 3 ]
+
       let
         m1 = Multiply 3
         m2 = Multiply 4
@@ -179,10 +199,12 @@ main =
           Assert.equal (act m1 (act m2 a))
             $ act (m1 <> m2) a
         test "concrete" do
-          let expectOneOf = [ 1, 15, 125 ]
-              got = act m1 a
+          let
+            expectOneOf = [ 1, 15, 125 ]
+            got = act m1 a
           Assert.assert ("expected one of " <> show expectOneOf <> ", got " <> show got)
             $ elem got expectOneOf
+
       -- Multiply String is the actual exercise question
       suite "Action Multiply String" do
         let
@@ -196,6 +218,7 @@ main =
         test "concrete" do
           Assert.equal "foofoofoo"
             $ act m1 a
+
       suite "Action m (Array a)" do
         suite "Action Multiply (Array Int)" do
           let
@@ -207,10 +230,12 @@ main =
             Assert.equal (act m1 (act m2 a))
               $ act (m1 <> m2) a
           test "concrete" do
-            let expectOneOf = [[ 0, 0, 1], [ 3, 6, 9 ], [ 1, 8, 27 ]]
-                got = act m1 a
+            let
+              expectOneOf = [ [ 0, 0, 1 ], [ 3, 6, 9 ], [ 1, 8, 27 ] ]
+              got = act m1 a
             Assert.assert ("expected one of " <> show expectOneOf <> ", got " <> show got)
               $ elem got expectOneOf
+
         suite "Action Multiply (Array String)" do
           let
             a = [ "foo", "bar", "baz" ]
@@ -227,6 +252,7 @@ main =
               , "bazbazbaz"
               ]
               $ act m1 a
+
       suite "Action m (Self m)" do
         let
           a = Self m1
@@ -239,6 +265,7 @@ main =
         test "concrete" do
           Assert.equal (Self (Multiply 12))
             $ act m2 a
+
     suite "A Type Class for Hashes" do
       suite "arrayHasDuplicates" do
         test "no dupe" do
@@ -250,6 +277,7 @@ main =
         test "only hash dupe" do
           Assert.equal false
             $ arrayHasDuplicates [ 65536, 1, 2, 3 ]
+
       suite "Hashable Hour" do
         test "match" do
           Assert.equal (hash $ Hour 1)
@@ -260,6 +288,8 @@ main =
             $ Assert.equal (hash $ Hour 1)
             $ hash
             $ Hour 14
+
+{-  Move this block comment starting point to enable more tests
 
 -}
 runChapterExamples :: TestSuite

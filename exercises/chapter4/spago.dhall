@@ -11,6 +11,7 @@ You can edit this file as you like.
   , "foldable-traversable"
   , "integers"
   , "maybe"
+  , "numbers"
   , "prelude"
   , "strings"
   , "test-unit"
