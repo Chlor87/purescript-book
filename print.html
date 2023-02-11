@@ -5,8 +5,10 @@
         <meta charset="UTF-8">
         <title>PureScript by Example</title>
         <meta name="robots" content="noindex" />
+
+
         <!-- Custom HTML head -->
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
@@ -17,25 +19,29 @@
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
         <link rel="stylesheet" href="css/print.css" media="print">
+
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
         <link rel="stylesheet" href="fonts/fonts.css">
+
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
-        <script type="text/javascript">
+        <script>
             var path_to_root = "";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
-        <script type="text/javascript">
+        <script>
             try {
                 var theme = localStorage.getItem('mdbook-theme');
                 var sidebar = localStorage.getItem('mdbook-sidebar');
@@ -51,7 +57,7 @@
         </script>
 
         <!-- Set the theme before any content is loaded, prevents flash -->
-        <script type="text/javascript">
+        <script>
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
@@ -63,7 +69,7 @@
         </script>
 
         <!-- Hide / unhide sidebar before it is displayed -->
-        <script type="text/javascript">
+        <script>
             var html = document.querySelector('html');
             var sidebar = 'hidden';
             if (document.body.clientWidth >= 1080) {
@@ -84,7 +90,7 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                <div id="menu-bar-hover-placeholder"></div>
+                                <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky bordered">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
@@ -94,7 +100,7 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
@@ -114,6 +120,7 @@
                         <a href="https://github.com/purescript-contrib/purescript-book" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
+
                     </div>
                 </div>
 
@@ -127,8 +134,9 @@
                         </ul>
                     </div>
                 </div>
+
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
-                <script type="text/javascript">
+                <script>
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
                     document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
                     Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
@@ -312,7 +320,11 @@ All 2 tests passed! 🎉
 </ol>
 <h2 id="solution"><a class="header" href="#solution">Solution</a></h2>
 <p>We'll start by enabling the tests for this exercise. Move the start of the block-comment down a few lines as shown below. Block comments start with <code>{-</code> and end with <code>-}</code>:</p>
-<pre><code class="language-hs">
+<pre><code class="language-hs">    suite &quot;diagonal&quot; do
+      test &quot;3 4 5&quot; do
+        Assert.equal 5.0 (diagonal 3.0 4.0)
+      test &quot;5 12 13&quot; do
+        Assert.equal 13.0 (diagonal 5.0 12.0)
     {-  Move this block comment starting point to enable more tests
 </code></pre>
 <p>If we attempt to run the test now, we'll encounter a compilation error because we have not yet implemented our <code>diagonal</code> function.</p>
@@ -367,7 +379,13 @@ All 4 tests passed! 🎉
 <p>The front-end of our application will be the interactive mode PSCi, but it would be possible to build on this code to write a front-end in JavaScript. In fact, we will do exactly that in later chapters, adding form validation and save/restore functionality.</p>
 <h2 id="project-setup"><a class="header" href="#project-setup">Project Setup</a></h2>
 <p>The source code for this chapter is contained in the file <code>src/Data/AddressBook.purs</code>. This file starts with a module declaration and its import list:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">module Data.AddressBook where
+
+import Prelude
+
+import Control.Plus (empty)
+import Data.List (List(..), filter, head)
+import Data.Maybe (Maybe)
 </code></pre>
 <p>Here, we import several modules:</p>
 <ul>
@@ -504,14 +522,22 @@ y + z
 <p>The only exception to this rule is the <code>where</code> keyword in the initial <code>module</code> declaration at the top of a source file.</p>
 <h2 id="defining-our-types"><a class="header" href="#defining-our-types">Defining Our Types</a></h2>
 <p>A good first step when tackling a new problem in PureScript is to write out type definitions for any values you will be working with. First, let's define a type for records in our address book:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">type Entry =
+  { firstName :: String
+  , lastName  :: String
+  , address   :: Address
+  }
 </code></pre>
 <p>This defines a <em>type synonym</em> called <code>Entry</code> - the type <code>Entry</code> is equivalent to the type on the right of the equals symbol: a record type with three fields - <code>firstName</code>, <code>lastName</code> and <code>address</code>. The two name fields will have type <code>String</code>, and the <code>address</code> field will have type <code>Address</code>, defined as follows:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">type Address =
+  { street :: String
+  , city   :: String
+  , state  :: String
+  }
 </code></pre>
 <p>Note that records can contain other records.</p>
 <p>Now let's define a third type synonym, for our address book data structure, which will be represented simply as a linked list of entries:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">type AddressBook = List Entry
 </code></pre>
 <p>Note that <code>List Entry</code> is not the same as <code>Array Entry</code>, which represents an <em>array</em> of entries.</p>
 <h2 id="type-constructors-and-kinds"><a class="header" href="#type-constructors-and-kinds">Type Constructors and Kinds</a></h2>
@@ -539,13 +565,18 @@ Type
 <p>PureScript's <em>kind system</em> supports other interesting kinds, which we will see later in the book.</p>
 <h2 id="displaying-address-book-entries"><a class="header" href="#displaying-address-book-entries">Displaying Address Book Entries</a></h2>
 <p>Let's write our first function, which will render an address book entry as a string. We start by giving the function a type. This is optional, but good practice, since it acts as a form of documentation. In fact, the PureScript compiler will give a warning if a top-level declaration does not contain a type annotation. A type declaration separates the name of a function from its type with the <code>::</code> symbol:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">showEntry :: Entry -&gt; String
 </code></pre>
 <p>This type signature says that <code>showEntry</code> is a function, which takes an <code>Entry</code> as an argument and returns a <code>String</code>. Here is the code for <code>showEntry</code>:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">showEntry entry = entry.lastName &lt;&gt; &quot;, &quot; &lt;&gt;
+                  entry.firstName &lt;&gt; &quot;: &quot; &lt;&gt;
+                  showAddress entry.address
 </code></pre>
 <p>This function concatenates the three fields of the <code>Entry</code> record into a single string, using the <code>showAddress</code> function to turn the record inside the <code>address</code> field into a <code>String</code>. <code>showAddress</code> is defined similarly:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">showAddress :: Address -&gt; String
+showAddress addr = addr.street &lt;&gt; &quot;, &quot; &lt;&gt;
+                   addr.city &lt;&gt; &quot;, &quot; &lt;&gt;
+                   addr.state
 </code></pre>
 <p>A function definition begins with the name of the function, followed by a list of argument names. The result of the function is specified after the equals sign. Fields are accessed with a dot, followed by the field name. In PureScript, string concatenation uses the diamond operator (<code>&lt;&gt;</code>), instead of the plus operator like in JavaScript.</p>
 <h2 id="test-early-test-often"><a class="header" href="#test-early-test-often">Test Early, Test Often</a></h2>
@@ -574,10 +605,11 @@ Type
 </code></pre>
 <h2 id="creating-address-books"><a class="header" href="#creating-address-books">Creating Address Books</a></h2>
 <p>Now let's write some utility functions for working with address books. We will need a value which represents an empty address book: an empty list.</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">emptyBook :: AddressBook
+emptyBook = empty
 </code></pre>
 <p>We will also need a function for inserting a value into an existing address book. We will call this function <code>insertEntry</code>. Start by giving its type:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">insertEntry :: Entry -&gt; AddressBook -&gt; AddressBook
 </code></pre>
 <p>This type signature says that <code>insertEntry</code> takes an <code>Entry</code> as its first argument, and an <code>AddressBook</code> as a second argument, and returns a new <code>AddressBook</code>.</p>
 <p>We don't modify the existing <code>AddressBook</code> directly. Instead, we return a new <code>AddressBook</code> which contains the same data. As such, <code>AddressBook</code> is an example of an <em>immutable data structure</em>. This is an important idea in PureScript - mutation is a side-effect of code, and inhibits our ability to reason effectively about its behavior, so we prefer pure functions and immutable data where possible.</p>
@@ -631,7 +663,8 @@ insertEntry entry book = Cons entry book
 insertEntry entry = Cons entry
 </code></pre>
 <p>But now, by the same argument, we can remove <code>entry</code> from both sides:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">insertEntry :: Entry -&gt; AddressBook -&gt; AddressBook
+insertEntry = Cons
 </code></pre>
 <p>This process is called <em>eta conversion</em>, and can be used (along with some other techniques) to rewrite functions in <em>point-free form</em>, which means functions defined without reference to their arguments.</p>
 <p>In the case of <code>insertEntry</code>, <em>eta conversion</em> has resulted in a very clear definition of our function - &quot;<code>insertEntry</code> is just cons on lists&quot;. However, it is arguable whether point-free form is better in general.</p>
@@ -680,7 +713,7 @@ head :: AddressBook -&gt; Maybe Entry
 <p>We know that we will need to pass the first and last names that we want to search for, as arguments to our function.</p>
 <p>We also know that we will need a function to pass to <code>filter</code>. Let's call this function <code>filterEntry</code>. <code>filterEntry</code> will have type <code>Entry -&gt; Boolean</code>. The application <code>filter filterEntry</code> will then have type <code>AddressBook -&gt; AddressBook</code>. If we pass the result of this function to the <code>head</code> function, we get our result of type <code>Maybe Entry</code>.</p>
 <p>Putting these facts together, a reasonable type signature for our function, which we will call <code>findEntry</code>, is:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">findEntry :: String -&gt; String -&gt; AddressBook -&gt; Maybe Entry
 </code></pre>
 <p>This type signature says that <code>findEntry</code> takes two strings, the first and last names, and a <code>AddressBook</code>, and returns an optional <code>Entry</code>. The optional result will contain a value only if the name is found in the address book.</p>
 <p>And here is the definition of <code>findEntry</code>:</p>
@@ -770,10 +803,11 @@ add5 x = 5 `(+)` x  -- Yo Dawg, I herd you like infix, so we put infix in your i
 <p>Note that the <code>book</code> argument is passed to the <code>filter filterEntry</code> function, and the result of this application is passed to <code>head</code>. In other words, <code>book</code> is passed to the <em>composition</em> of the functions <code>filter filterEntry</code> and <code>head</code>.</p>
 <p>In PureScript, the function composition operators are <code>&lt;&lt;&lt;</code> and <code>&gt;&gt;&gt;</code>. The first is &quot;backwards composition&quot;, and the second is &quot;forwards composition&quot;.</p>
 <p>We can rewrite the right-hand side of <code>findEntry</code> using either operator. Using backwards-composition, the right-hand side would be</p>
-<pre><code>(head &lt;&lt;&lt; filter filterEntry) book
+<pre><code class="language-haskell">(head &lt;&lt;&lt; filter filterEntry) book
 </code></pre>
 <p>In this form, we can apply the eta conversion trick from earlier, to arrive at the final form of <code>findEntry</code>:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">findEntry firstName lastName = head &lt;&lt;&lt; filter filterEntry
+  where
     ...
 </code></pre>
 <p>An equally valid right-hand side would be:</p>
@@ -821,11 +855,23 @@ add5 x = 5 `(+)` x  -- Yo Dawg, I herd you like infix, so we put infix in your i
 <p>Recursion is closely linked to the <em>divide and conquer</em> strategy: to solve a problem on certain inputs, we can break down the inputs into smaller parts, solve the problem on those parts, and then assemble a solution from the partial solutions.</p>
 <p>Let's see some simple examples of recursion in PureScript.</p>
 <p>Here is the usual <em>factorial function</em> example:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">factorial :: Int -&gt; Int
+factorial n =
+  if n == 0 then
+    1
+  else
+    n * factorial (n - 1)
 </code></pre>
 <p>Here, we can see how the factorial function is computed by reducing the problem to a subproblem - that of computing the factorial of a smaller integer. When we reach zero, the answer is immediate.</p>
 <p>Here is another common example, which computes the <em>Fibonacci function</em>:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">fib :: Int -&gt; Int
+fib n =
+  if n == 0 then
+    0
+  else if n == 1 then
+    1
+  else
+    fib (n - 1) + fib (n - 2)
 </code></pre>
 <p>Again, this problem is solved by considering the solutions to subproblems. In this case, there are two subproblems, corresponding to the expressions <code>fib (n - 1)</code> and <code>fib (n - 2)</code>. When these two subproblems are solved, we assemble the result by adding the partial results.</p>
 <p>Note that, while the above examples of <code>factorial</code> and <code>fib</code> work as intended, a more idiomatic implementation would use pattern matching instead of <code>if</code>/<code>then</code>/<code>else</code>. Pattern matching techniques are discussed in a later chapter.</p>
@@ -837,7 +883,12 @@ add5 x = 5 `(+)` x  -- Yo Dawg, I herd you like infix, so we put infix in your i
 import Data.Array (null, tail)
 import Data.Maybe (fromMaybe)
 
-
+length :: forall a. Array a -&gt; Int
+length arr =
+  if null arr then
+    0
+  else
+    1 + (length $ fromMaybe [] $ tail arr)
 </code></pre>
 <p>In this function, we use an <code>if .. then .. else</code> expression to branch based on the emptiness of the array. The <code>null</code> function returns <code>true</code> on an empty array. Empty arrays have length zero, and a non-empty array has a length that is one more than the length of its tail.</p>
 <p>The <code>tail</code> function returns a <code>Maybe</code> wrapping the given array without its first element. If the array is empty (i.e. it doesn't have a tail) <code>Nothing</code> is returned. The <code>fromMaybe</code> function takes a default value and a <code>Maybe</code> value. If the latter is <code>Nothing</code> it returns the default, in the other case it returns the value wrapped by <code>Just</code>.</p>
@@ -991,7 +1042,11 @@ forall a b. (a -&gt; Array b) -&gt; Array a -&gt; Array b
 <p>However, we can improve the readability of our code considerably. <code>map</code> and <code>concatMap</code> are so fundamental, that they (or rather, their generalizations <code>map</code> and <code>bind</code>) form the basis of a special syntax called <em>do notation</em>.</p>
 <p><em>Note</em>: Just like <code>map</code> and <code>concatMap</code> allowed us to write <em>array comprehensions</em>, the more general operators <code>map</code> and <code>bind</code> allow us to write so-called <em>monad comprehensions</em>. We'll see plenty more examples of <em>monads</em> later in the book, but in this chapter, we will only consider arrays.</p>
 <p>We can rewrite our <code>factors</code> function using do notation as follows:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">factors :: Int -&gt; Array (Array Int)
+factors n = filter (\xs -&gt; product xs == n) do
+  i &lt;- 1 .. n
+  j &lt;- i .. n
+  pure [ i, j ]
 </code></pre>
 <p>The keyword <code>do</code> introduces a block of code which uses do notation. The block consists of expressions of a few types:</p>
 <ul>
@@ -1005,14 +1060,23 @@ forall a b. (a -&gt; Array b) -&gt; Array a -&gt; Array b
 [[1, 2]]
 </code></pre>
 <p>In the case of arrays, <code>pure</code> simply constructs a singleton array. In fact, we could modify our <code>factors</code> function to use this form, instead of using <code>pure</code>:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">factorsV2 :: Int -&gt; Array (Array Int)
+factorsV2 n = filter (\xs -&gt; product xs == n) do
+  i &lt;- 1 .. n
+  j &lt;- i .. n
+  [ [ i, j ] ]
 </code></pre>
 <p>and the result would be the same.</p>
 <h2 id="guards"><a class="header" href="#guards">Guards</a></h2>
 <p>One further change we can make to the <code>factors</code> function is to move the filter inside the array comprehension. This is possible using the <code>guard</code> function from the <code>Control.Alternative</code> module (from the <code>control</code> package):</p>
 <pre><code class="language-haskell">import Control.Alternative (guard)
 
-
+factorsV3 :: Int -&gt; Array (Array Int)
+factorsV3 n = do
+  i &lt;- 1 .. n
+  j &lt;- i .. n
+  guard $ i * j == n
+  pure [ i, j ]
 </code></pre>
 <p>Just like <code>pure</code>, we can apply the <code>guard</code> function in PSCi to understand how it works. The type of the <code>guard</code> function is more general than we need here:</p>
 <pre><code class="language-text">&gt; import Control.Alternative
@@ -1104,7 +1168,11 @@ RangeError: Maximum call stack size exceeded
 <p>The key observation which enables tail recursion optimization is the following: a recursive call in <em>tail position</em> to a function can be replaced with a <em>jump</em>, which does not allocate a stack frame. A call is in <em>tail position</em> when it is the last call made before a function returns. This is the reason why we observed a stack overflow in the example - the recursive call to <code>f</code> was <em>not</em> in tail position.</p>
 <p>In practice, the PureScript compiler does not replace the recursive call with a jump, but rather replaces the entire recursive function with a <em>while loop</em>.</p>
 <p>Here is an example of a recursive function with all recursive calls in tail position:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">factorialTailRec :: Int -&gt; Int -&gt; Int
+factorialTailRec n acc =
+  if n == 0
+    then acc
+    else factorialTailRec (n - 1) (acc * n)
 </code></pre>
 <p>Notice that the recursive call to <code>factorialTailRec</code> is the last thing that happens in this function - it is in tail position.</p>
 <h2 id="accumulators"><a class="header" href="#accumulators">Accumulators</a></h2>
@@ -1117,7 +1185,14 @@ length arr =
     else 1 + (length $ fromMaybe [] $ tail arr)
 </code></pre>
 <p>This implementation is not tail recursive, so the generated JavaScript will cause a stack overflow when executed on a large input array. However, we can make it tail recursive, by introducing a second function argument to accumulate the result instead:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">lengthTailRec :: forall a. Array a -&gt; Int
+lengthTailRec arr = length' arr 0
+  where
+  length' :: Array a -&gt; Int -&gt; Int
+  length' arr' acc =
+    if null arr'
+      then acc
+      else length' (fromMaybe [] $ tail arr') (acc + 1)
 </code></pre>
 <p>In this case, we delegate to the helper function <code>length'</code>, which is tail recursive - its only recursive call is in the last case, and is in tail position. This means that the generated code will be a <em>while loop</em>, and will not blow the stack for large inputs.</p>
 <p>To understand the implementation of <code>lengthTailRec</code>, note that the helper function <code>length'</code> essentially uses the accumulator parameter to maintain an additional piece of state - the partial result. It starts out at 0, and grows by adding 1 for every element in the input array.</p>
@@ -1182,11 +1257,11 @@ true
 <p>The <code>Test.Examples</code> module defines functions which use the <code>Data.Path</code> API. You do not need to modify the <code>Data.Path</code> module, or understand its implementation. We will work entirely in the <code>Test.Examples</code> module.</p>
 <h2 id="listing-all-files"><a class="header" href="#listing-all-files">Listing All Files</a></h2>
 <p>Let's write a function which performs a deep enumeration of all files inside a directory. This function will have the following type:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">allFiles :: Path -&gt; Array Path
 </code></pre>
 <p>We can define this function by recursion. First, we can use <code>ls</code> to enumerate the immediate children of the directory. For each child, we can recursively apply <code>allFiles</code>, which will return an array of paths. <code>concatMap</code> will allow us to apply <code>allFiles</code> and flatten the results at the same time.</p>
 <p>Finally, we use the cons operator <code>:</code> to include the current file:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">allFiles file = file : concatMap allFiles (ls file)
 </code></pre>
 <p><em>Note</em>: the cons operator <code>:</code> actually has poor performance on immutable arrays, so it is not recommended in general. Performance can be improved by using other data structures, such as linked lists and sequences.</p>
 <p>Let's try this function in PSCi:</p>
@@ -1200,7 +1275,10 @@ true
 <p>Great! Now let's see if we can write this function using an array comprehension using do notation.</p>
 <p>Recall that a backwards arrow corresponds to choosing an element from an array. The first step is to choose an element from the immediate children of the argument. Then we simply call the function recursively for that file. Since we are using do notation, there is an implicit call to <code>concatMap</code> which concatenates all of the recursive results.</p>
 <p>Here is the new version:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">allFiles' :: Path -&gt; Array Path
+allFiles' file = file : do
+  child &lt;- ls file
+  allFiles' child
 </code></pre>
 <p>Try out the new version in PSCi - you should get the same result. I'll let you decide which version you find clearer.</p>
 <h2 id="exercises-6"><a class="header" href="#exercises-6">Exercises</a></h2>
@@ -1234,16 +1312,25 @@ Nothing
 <p>The source code for this chapter is defined in the file <code>src/Data/Picture.purs</code>.</p>
 <p>The <code>Data.Picture</code> module defines a data type <code>Shape</code> for simple shapes, and a type <code>Picture</code> for collections of shapes, along with functions for working with those types.</p>
 <p>The module imports the <code>Data.Foldable</code> module, which provides functions for folding data structures:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">module Data.Picture where
+
+import Prelude
+import Data.Foldable (foldl)
+import Data.Number (infinity)
 </code></pre>
 <p>The <code>Data.Picture</code> module also imports the <code>Number</code> module, but this time using the <code>as</code> keyword:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">import Data.Number as Number
 </code></pre>
 <p>This makes the types and functions in that module available for use, but only by using the <em>qualified name</em>, like <code>Number.max</code>. This can be useful to avoid overlapping imports, or just to make it clearer which modules certain things are imported from.</p>
 <p><em>Note</em>: it is not necessary to use the same module name as the original module for a qualified import. Shorter qualified names like <code>import Data.Number as N</code> are possible, and quite common.</p>
 <h2 id="simple-pattern-matching"><a class="header" href="#simple-pattern-matching">Simple Pattern Matching</a></h2>
 <p>Let's begin by looking at an example. Here is a function which computes the greatest common divisor of two integers using pattern matching:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">gcd :: Int -&gt; Int -&gt; Int
+gcd n 0 = n
+gcd 0 m = m
+gcd n m = if n &gt; m
+            then gcd (n - m) m
+            else gcd n (m - n)
 </code></pre>
 <p>This algorithm is called the Euclidean Algorithm. If you search for its definition online, you will likely find a set of mathematical equations which look a lot like the code above. This is one benefit of pattern matching: it allows you to define code by cases, writing simple, declarative code which looks like a specification of a mathematical function.</p>
 <p>A function written using pattern matching works by pairing sets of conditions with their results. Each line is called an <em>alternative</em> or a <em>case</em>. The expressions on the left of the equals sign are called <em>patterns</em>, and each case consists of one or more patterns, separated by spaces. Cases describe which conditions the arguments must satisfy before the expression on the right of the equals sign should be evaluated and returned. Each case is tried in order, and the first case whose patterns match their inputs determines the return value.</p>
@@ -1266,15 +1353,23 @@ Nothing
 <li>Wildcard patterns, indicated with an underscore (<code>_</code>), which match any argument, and which do not bind any names.</li>
 </ul>
 <p>Here are two more examples which demonstrate using these simple patterns:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">fromString :: String -&gt; Boolean
+fromString &quot;true&quot; = true
+fromString _      = false
 
-
+toString :: Boolean -&gt; String
+toString true  = &quot;true&quot;
+toString false = &quot;false&quot;
 </code></pre>
 <p>Try these functions in PSCi.</p>
 <h2 id="guards-1"><a class="header" href="#guards-1">Guards</a></h2>
 <p>In the Euclidean algorithm example, we used an <code>if .. then .. else</code> expression to switch between the two alternatives when <code>m &gt; n</code> and <code>m &lt;= n</code>. Another option in this case would be to use a <em>guard</em>.</p>
 <p>A guard is a boolean-valued expression which must be satisfied in addition to the constraints imposed by the patterns. Here is the Euclidean algorithm rewritten to use a guard:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">gcdV2 :: Int -&gt; Int -&gt; Int
+gcdV2 n 0 = n
+gcdV2 0 n = n
+gcdV2 n m | n &gt; m     = gcdV2 (n - m) m
+          | otherwise = gcdV2 n (m - n)
 </code></pre>
 <p>In this case, the third line uses a guard to impose the extra condition that the first argument is strictly larger than the second. The guard in the final line uses the expression <code>otherwise</code>, which might seem like a keyword, but is in fact just a regular binding in <code>Prelude</code>:</p>
 <pre><code class="language-text">&gt; :type otherwise
@@ -1292,10 +1387,14 @@ true
 </ol>
 <h2 id="array-patterns"><a class="header" href="#array-patterns">Array Patterns</a></h2>
 <p><em>Array literal patterns</em> provide a way to match arrays of a fixed length. For example, suppose we want to write a function <code>isEmpty</code> which identifies empty arrays. We could do this by using an empty array pattern (<code>[]</code>) in the first alternative:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">isEmpty :: forall a. Array a -&gt; Boolean
+isEmpty [] = true
+isEmpty _ = false
 </code></pre>
 <p>Here is another function which matches arrays of length five, binding each of its five elements in a different way:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">takeFive :: Array Int -&gt; Int
+takeFive [0, 1, a, b, _] = a * b
+takeFive _ = 0
 </code></pre>
 <p>The first pattern only matches arrays with five elements, whose first and second elements are 0 and 1 respectively. In that case, the function returns the product of the third and fourth elements. In every other case, the function returns zero. For example, in PSCi:</p>
 <pre><code class="language-text">&gt; :paste
@@ -1317,7 +1416,8 @@ true
 <p><em>Record patterns</em> are used to match - you guessed it - records.</p>
 <p>Record patterns look just like record literals, but instead of values on the right of the colon, we specify a binder for each field.</p>
 <p>For example: this pattern matches any record which contains fields called <code>first</code> and <code>last</code>, and binds their values to the names <code>x</code> and <code>y</code> respectively:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">showPerson :: { first :: String, last :: String } -&gt; String
+showPerson { first: x, last: y } = y &lt;&gt; &quot;, &quot; &lt;&gt; x
 </code></pre>
 <p>Record patterns provide a good example of an interesting feature of the PureScript type system: <em>row polymorphism</em>. Suppose we had defined <code>showPerson</code> without a type signature above. What would its inferred type have been? Interestingly, it is not the same as the type we gave:</p>
 <pre><code class="language-text">&gt; showPerson { first: x, last: y } = y &lt;&gt; &quot;, &quot; &lt;&gt; x
@@ -1337,29 +1437,44 @@ forall r. { first :: String, last :: String | r } -&gt; String
 
 Type of expression lacks required label &quot;last&quot;
 </code></pre>
-<p>We can read the new type signature of <code>showPerson</code> as &quot;takes any record with <code>first</code> and <code>last</code> fields which are <code>Strings</code> <em>and any other fields</em>, and returns a <code>String</code>&quot;. This function is polymorphic in the <em>row</em> <code>r</code> of record fields, hence the name <em>row polymorphism</em>.  Note that this behavior is different than that of the original <code>showPerson</code>. Without the row variable <code>r</code>, <code>showPerson</code> only accepts records with <em>exactly</em> a <code>first</code> and <code>last</code> field and no others. </p>
+<p>We can read the new type signature of <code>showPerson</code> as &quot;takes any record with <code>first</code> and <code>last</code> fields which are <code>Strings</code> <em>and any other fields</em>, and returns a <code>String</code>&quot;. This function is polymorphic in the <em>row</em> <code>r</code> of record fields, hence the name <em>row polymorphism</em>.  Note that this behavior is different than that of the original <code>showPerson</code>. Without the row variable <code>r</code>, <code>showPerson</code> only accepts records with <em>exactly</em> a <code>first</code> and <code>last</code> field and no others.</p>
 <p>Note that we could have also written</p>
 <pre><code class="language-haskell">&gt; showPerson p = p.last &lt;&gt; &quot;, &quot; &lt;&gt; p.first
 </code></pre>
 <p>and PSCi would have inferred the same type.</p>
 <h2 id="record-puns"><a class="header" href="#record-puns">Record Puns</a></h2>
 <p>Recall that the <code>showPerson</code> function matches a record inside its argument, binding the <code>first</code> and <code>last</code> fields to values named <code>x</code> and <code>y</code>. We could alternatively just reuse the field names themselves, and simplify this sort of pattern match as follows:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">showPersonV2 :: { first :: String, last :: String } -&gt; String
+showPersonV2 { first, last } = last &lt;&gt; &quot;, &quot; &lt;&gt; first
 </code></pre>
 <p>Here, we only specify the names of the fields, and we do not need to specify the names of the values we want to introduce. This is called a <em>record pun</em>.</p>
 <p>It is also possible to use record puns to <em>construct</em> records. For example, if we have values named <code>first</code> and <code>last</code> in scope, we can construct a person record using <code>{ first, last }</code>:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">unknownPerson :: { first :: String, last :: String }
+unknownPerson = { first, last }
+  where
+    first = &quot;Jane&quot;
+    last  = &quot;Doe&quot;
 </code></pre>
 <p>This may improve readability of code in some circumstances.</p>
 <h2 id="nested-patterns"><a class="header" href="#nested-patterns">Nested Patterns</a></h2>
 <p>Array patterns and record patterns both combine smaller patterns to build larger patterns. For the most part, the examples above have only used simple patterns inside array patterns and record patterns, but it is important to note that patterns can be arbitrarily <em>nested</em>, which allows functions to be defined using conditions on potentially complex data types.</p>
 <p>For example, this code combines two record patterns:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">type Address = { street :: String, city :: String }
+
+type Person = { name :: String, address :: Address }
+
+livesInLA :: Person -&gt; Boolean
+livesInLA { address: { city: &quot;Los Angeles&quot; } } = true
+livesInLA _ = false
 </code></pre>
 <h2 id="named-patterns"><a class="header" href="#named-patterns">Named Patterns</a></h2>
 <p>Patterns can be <em>named</em> to bring additional names into scope when using nested patterns. Any pattern can be named by using the <code>@</code> symbol.</p>
 <p>For example, this function sorts two-element arrays, naming the two elements, but also naming the array itself:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">sortPair :: Array Int -&gt; Array Int
+sortPair arr@[x, y]
+  | x &lt;= y = arr
+  | otherwise = [y, x]
+sortPair arr = arr
 </code></pre>
 <p>This way, we save ourselves from allocating a new array if the pair is already sorted. Note that if the input array does not contain <em>exactly</em> two elements, then this function simply returns it unchanged, even if it's unsorted.</p>
 <h2 id="exercises-8"><a class="header" href="#exercises-8">Exercises</a></h2>
@@ -1371,9 +1486,15 @@ Type of expression lacks required label &quot;last&quot;
 <h2 id="case-expressions"><a class="header" href="#case-expressions">Case Expressions</a></h2>
 <p>Patterns do not only appear in top-level function declarations. It is possible to use patterns to match on an intermediate value in a computation, using a <code>case</code> expression. Case expressions provide a similar type of utility to anonymous functions: it is not always desirable to give a name to a function, and a <code>case</code> expression allows us to avoid naming a function just because we want to use a pattern.</p>
 <p>Here is an example. This function computes &quot;longest zero suffix&quot; of an array (the longest suffix which sums to zero):</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">import Data.Array (tail)
+import Data.Foldable (sum)
+import Data.Maybe (fromMaybe)
 
-
+lzs :: Array Int -&gt; Array Int
+lzs [] = []
+lzs xs = case sum xs of
+           0 -&gt; xs
+           _ -&gt; lzs (fromMaybe [] $ tail xs)
 </code></pre>
 <p>For example:</p>
 <pre><code class="language-text">&gt; lzs [1, 2, 3, 4]
@@ -1386,9 +1507,10 @@ Type of expression lacks required label &quot;last&quot;
 <h2 id="pattern-match-failures-and-partial-functions"><a class="header" href="#pattern-match-failures-and-partial-functions">Pattern Match Failures and Partial Functions</a></h2>
 <p>If patterns in a case expression are tried in order, then what happens in the case when none of the patterns in a case alternatives match their inputs? In this case, the case expression will fail at runtime with a <em>pattern match failure</em>.</p>
 <p>We can see this behavior with a simple example:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">import Partial.Unsafe (unsafePartial)
 
-
+partialFunction :: Boolean -&gt; Boolean
+partialFunction = unsafePartial \true -&gt; true
 </code></pre>
 <p>This function contains only a single case, which only matches a single input, <code>true</code>. If we compile this file, and test in PSCi with any other argument, we will see an error at runtime:</p>
 <pre><code class="language-text">&gt; partialFunction false
@@ -1432,9 +1554,16 @@ redundantCase false = false
 <p>However, this approach has one major drawback: to work with <code>Shape</code>s abstractly, it is necessary to identify all of the operations one might wish to perform, and to define them on the <code>Shape</code> interface. It becomes difficult to add new operations without breaking modularity.</p>
 <p>Algebraic data types provide a type-safe way to solve this sort of problem, if the set of shapes is known in advance. It is possible to define new operations on <code>Shape</code> in a modular way, and still maintain type-safety.</p>
 <p>Here is how <code>Shape</code> might be represented as an algebraic data type:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">data Shape
+  = Circle Point Number
+  | Rectangle Point Number Number
+  | Line Point Point
+  | Text Point String
 
-
+type Point =
+  { x :: Number
+  , y :: Number
+  }
 </code></pre>
 <p>This declaration defines <code>Shape</code> as a sum of different constructors, and for each constructor identifies the data that is included. A <code>Shape</code> is either a <code>Circle</code> which contains a center <code>Point</code> and a radius (a number), or a <code>Rectangle</code>, or a <code>Line</code>, or <code>Text</code>. There are no other ways to construct a value of type <code>Shape</code>.</p>
 <p>An algebraic data type is introduced using the <code>data</code> keyword, followed by the name of the new type and any type arguments. The type's constructors (i.e. its <em>data constructors</em>) are defined after the equals symbol, and are separated by pipe characters (<code>|</code>). The data carried by an ADT's constructors doesn't have to be restricted to primitive types: constructors can include records, arrays, or even other ADTs.</p>
@@ -1450,13 +1579,30 @@ redundantCase false = false
 <h2 id="using-adts"><a class="header" href="#using-adts">Using ADTs</a></h2>
 <p>It is simple enough to use the constructors of an algebraic data type to construct a value: simply apply them like functions, providing arguments corresponding to the data included with the appropriate constructor.</p>
 <p>For example, the <code>Line</code> constructor defined above required two <code>Point</code>s, so to construct a <code>Shape</code> using the <code>Line</code> constructor, we have to provide two arguments of type <code>Point</code>:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">exampleLine :: Shape
+exampleLine = Line p1 p2
+  where
+    p1 :: Point
+    p1 = { x: 0.0, y: 0.0 }
+
+    p2 :: Point
+    p2 = { x: 100.0, y: 50.0 }
 </code></pre>
 <p>So, constructing values of algebraic data types is simple, but how do we use them? This is where the important connection with pattern matching appears: the only way to consume a value of an algebraic data type is to use a pattern to match its constructor.</p>
 <p>Let's see an example. Suppose we want to convert a <code>Shape</code> into a <code>String</code>. We have to use pattern matching to discover which constructor was used to construct the <code>Shape</code>. We can do this as follows:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">showShape :: Shape -&gt; String
+showShape (Circle c r) =
+  &quot;Circle [center: &quot; &lt;&gt; showPoint c &lt;&gt; &quot;, radius: &quot; &lt;&gt; show r &lt;&gt; &quot;]&quot;
+showShape (Rectangle c w h) =
+  &quot;Rectangle [center: &quot; &lt;&gt; showPoint c &lt;&gt; &quot;, width: &quot; &lt;&gt; show w &lt;&gt; &quot;, height: &quot; &lt;&gt; show h &lt;&gt; &quot;]&quot;
+showShape (Line start end) =
+  &quot;Line [start: &quot; &lt;&gt; showPoint start &lt;&gt; &quot;, end: &quot; &lt;&gt; showPoint end &lt;&gt; &quot;]&quot;
+showShape (Text loc text) =
+  &quot;Text [location: &quot; &lt;&gt; showPoint loc &lt;&gt; &quot;, text: &quot; &lt;&gt; show text &lt;&gt; &quot;]&quot;
 
-
+showPoint :: Point -&gt; String
+showPoint { x, y } =
+  &quot;(&quot; &lt;&gt; show x &lt;&gt; &quot;, &quot; &lt;&gt; show y &lt;&gt; &quot;)&quot;
 </code></pre>
 <p>Each constructor can be used as a pattern, and the arguments to the constructor can themselves be bound using patterns of their own. Consider the first case of <code>showShape</code>: if the <code>Shape</code> matches the <code>Circle</code> constructor, then we bring the arguments of <code>Circle</code> (center and radius) into scope using two variable patterns, <code>c</code> and <code>r</code>. The other cases are similar.</p>
 <h2 id="exercises-9"><a class="header" href="#exercises-9">Exercises</a></h2>
@@ -1469,10 +1615,22 @@ redundantCase false = false
 <p>There is a special case of algebraic data types, called <em>newtypes</em>. Newtypes are introduced using the <code>newtype</code> keyword instead of the <code>data</code> keyword.</p>
 <p>Newtypes must define <em>exactly one</em> constructor, and that constructor must take <em>exactly one</em> argument. That is, a newtype gives a new name to an existing type. In fact, the values of a newtype have the same runtime representation as the underlying type, so there is no runtime performance overhead. They are, however, distinct from the point of view of the type system. This gives an extra layer of type safety.</p>
 <p>As an example, we might want to define newtypes as type-level aliases for <code>Number</code>, to ascribe units like volts, amps, and ohms:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">newtype Volt = Volt Number
+newtype Ohm = Ohm Number
+newtype Amp = Amp Number
 </code></pre>
 <p>Then we define functions and values using these types:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">calculateCurrent :: Volt -&gt; Ohm -&gt; Amp
+calculateCurrent (Volt v) (Ohm r) = Amp (v / r)
+
+battery :: Volt
+battery = Volt 1.5
+
+lightbulb :: Ohm
+lightbulb = Ohm 500.0
+
+current :: Amp
+current = calculateCurrent battery lightbulb
 </code></pre>
 <p>This prevents us from making silly mistakes, such as attempting to calculate the current produced by <em>two</em> lightbulbs <em>without</em> a voltage source.</p>
 <pre><code class="language-haskell">current :: Amp
@@ -1505,7 +1663,7 @@ current = calculateCurrent lightbulb lightbulb -- uncaught mistake
 <pre><code class="language-Haskell">newtype CouldError err a = CouldError (Either err a)
 </code></pre>
 <p>Also note that the constructor of a newtype often has the same name as the newtype itself, but this is not a requirement. For example, unique names are also valid:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">newtype Coulomb = MakeCoulomb Number
 </code></pre>
 <p>In this case, <code>Coulomb</code> is the <em>type constructor</em> (of zero arguments) and <code>MakeCoulomb</code> is the <em>data constructor</em>. These constructors live in different namespaces, even when the names are identical, such as with the <code>Volt</code> example. This is true for all ADTs. Note that although the type constructor and data constructor can have different names, in practice it is idiomatic for them to share the same name. This is the case with <code>Amp</code> and <code>Volt</code> types above.</p>
 <p>Another application of newtypes is to attach different <em>behavior</em> to an existing type without changing its representation at runtime. We cover that use case in the next chapter when we discuss <em>type classes</em>.</p>
@@ -1519,10 +1677,11 @@ current = calculateCurrent lightbulb lightbulb -- uncaught mistake
 <h2 id="a-library-for-vector-graphics"><a class="header" href="#a-library-for-vector-graphics">A Library for Vector Graphics</a></h2>
 <p>Let's use the data types we have defined above to create a simple library for using vector graphics.</p>
 <p>Define a type synonym for a <code>Picture</code> - just an array of <code>Shape</code>s:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">type Picture = Array Shape
 </code></pre>
 <p>For debugging purposes, we'll want to be able to turn a <code>Picture</code> into something readable. The <code>showPicture</code> function lets us do that:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">showPicture :: Picture -&gt; Array String
+showPicture = map showShape
 </code></pre>
 <p>Let's try it out. Compile your module with <code>spago build</code> and open PSCi with <code>spago repl</code>:</p>
 <pre><code class="language-text">$ spago build
@@ -1537,10 +1696,19 @@ $ spago repl
 <h2 id="computing-bounding-rectangles"><a class="header" href="#computing-bounding-rectangles">Computing Bounding Rectangles</a></h2>
 <p>The example code for this module contains a function <code>bounds</code> which computes the smallest bounding rectangle for a <code>Picture</code>.</p>
 <p>The <code>Bounds</code> type defines a bounding rectangle.</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">type Bounds =
+  { top    :: Number
+  , left   :: Number
+  , bottom :: Number
+  , right  :: Number
+  }
 </code></pre>
 <p><code>bounds</code> uses the <code>foldl</code> function from <code>Data.Foldable</code> to traverse the array of <code>Shapes</code> in a <code>Picture</code>, and accumulate the smallest bounding rectangle:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">bounds :: Picture -&gt; Bounds
+bounds = foldl combine emptyBounds
+  where
+  combine :: Bounds -&gt; Shape -&gt; Bounds
+  combine b shape = union (shapeBounds shape) b
 </code></pre>
 <p>In the base case, we need to find the smallest bounding rectangle of an empty <code>Picture</code>, and the empty bounding rectangle defined by <code>emptyBounds</code> suffices.</p>
 <p>The accumulating function <code>combine</code> is defined in a <code>where</code> block. <code>combine</code> takes a bounding rectangle computed from <code>foldl</code>'s recursive call, and the next <code>Shape</code> in the array, and uses the <code>union</code> function to compute the union of the two bounding rectangles. The <code>shapeBounds</code> function computes the bounds of a single shape using pattern matching.</p>
@@ -1559,7 +1727,7 @@ $ spago repl
 <p>This chapter will introduce a powerful form of abstraction which is enabled by PureScript's type system - type classes.</p>
 <p>This motivating example for this chapter will be a library for hashing data structures. We will see how the machinery of type classes allow us to hash complex data structures without having to think directly about the structure of the data itself.</p>
 <p>We will also see a collection of standard type classes from PureScript's Prelude and standard libraries. PureScript code leans heavily on the power of type classes to express ideas concisely, so it will be beneficial to familiarize yourself with these classes.</p>
-<p>If you come from an Object Oriented background, please note that the word &quot;class&quot; means something <em>very</em> different in this context than what you're used to. A type class serves a purpose more similar to an OO interface. </p>
+<p>If you come from an Object Oriented background, please note that the word &quot;class&quot; means something <em>very</em> different in this context than what you're used to. A type class serves a purpose more similar to an OO interface.</p>
 <h2 id="project-setup-3"><a class="header" href="#project-setup-3">Project Setup</a></h2>
 <p>The source code for this chapter is defined in the file <code>src/Data/Hashable.purs</code>.</p>
 <p>The project has the following dependencies:</p>
@@ -2034,32 +2202,49 @@ secondElement xs = head (tail xs)
 <li>A hash function should distribute its results approximately uniformly over some set of hash codes.</li>
 </ul>
 <p>The first property looks a lot like a law for a type class, whereas the second property is more along the lines of an informal contract, and certainly would not be enforceable by PureScript's type system. However, this should provide the intuition for the following type class:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">newtype HashCode = HashCode Int
+
+instance hashCodeEq :: Eq HashCode where
+  eq (HashCode a) (HashCode b) = a == b
+
+hashCode :: Int -&gt; HashCode
+hashCode h = HashCode (h `mod` 65535)
+
+class Eq a &lt;= Hashable a where
+  hash :: a -&gt; HashCode
 </code></pre>
 <p>with the associated law that <code>a == b</code> implies <code>hash a == hash b</code>.</p>
 <p>We'll spend the rest of this section building a library of instances and functions associated with the <code>Hashable</code> type class.</p>
 <p>We will need a way to combine hash codes in a deterministic way:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">combineHashes :: HashCode -&gt; HashCode -&gt; HashCode
+combineHashes (HashCode h1) (HashCode h2) = hashCode (73 * h1 + 51 * h2)
 </code></pre>
 <p>The <code>combineHashes</code> function will mix two hash codes and redistribute the result over the interval 0-65535.</p>
 <p>Let's write a function which uses the <code>Hashable</code> constraint to restrict the types of its inputs. One common task which requires a hashing function is to determine if two values hash to the same hash code. The <code>hashEqual</code> relation provides such a capability:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">hashEqual :: forall a. Hashable a =&gt; a -&gt; a -&gt; Boolean
+hashEqual = eq `on` hash
 </code></pre>
 <p>This function uses the <code>on</code> function from <code>Data.Function</code> to define hash-equality in terms of equality of hash codes, and should read like a declarative definition of hash-equality: two values are &quot;hash-equal&quot; if they are equal after each value has been passed through the <code>hash</code> function.</p>
 <p>Let's write some <code>Hashable</code> instances for some primitive types. Let's start with an instance for integers. Since a <code>HashCode</code> is really just a wrapped integer, this is simple - we can use the <code>hashCode</code> helper function:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">instance hashInt :: Hashable Int where
+  hash = hashCode
 </code></pre>
 <p>We can also define a simple instance for <code>Boolean</code> values using pattern matching:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">instance hashBoolean :: Hashable Boolean where
+  hash false = hashCode 0
+  hash true  = hashCode 1
 </code></pre>
 <p>With an instance for hashing integers, we can create an instance for hashing <code>Char</code>s by using the <code>toCharCode</code> function from <code>Data.Char</code>:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">instance hashChar :: Hashable Char where
+  hash = hash &lt;&lt;&lt; toCharCode
 </code></pre>
 <p>To define an instance for arrays, we can <code>map</code> the <code>hash</code> function over the elements of the array (if the element type is also an instance of <code>Hashable</code>) and then perform a left fold over the resulting hashes using the <code>combineHashes</code> function:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">instance hashArray :: Hashable a =&gt; Hashable (Array a) where
+  hash = foldl combineHashes (hashCode 0) &lt;&lt;&lt; map hash
 </code></pre>
 <p>Notice how we build up instances using the simpler instances we have already written. Let's use our new <code>Array</code> instance to define an instance for <code>String</code>s, by turning a <code>String</code> into an array of <code>Char</code>s:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">instance hashString :: Hashable String where
+  hash = hash &lt;&lt;&lt; toCharArray
 </code></pre>
 <p>How can we prove that these <code>Hashable</code> instances satisfy the type class law that we stated above? We need to make sure that equal values have equal hash codes. In cases like <code>Int</code>, <code>Char</code>, <code>String</code> and <code>Boolean</code>, this is simple because there are no values of those types which are equal in the sense of <code>Eq</code> but not equal identically.</p>
 <p>What about some more interesting types? To prove the type class law for the <code>Array</code> instance, we can use induction on the length of the array. The only array with length zero is <code>[]</code>. Any two non-empty arrays are equal only if they have equal head elements and equal tails, by the definition of <code>Eq</code> on arrays. By the inductive hypothesis, the tails have equal hashes, and we know that the head elements have equal hashes if the <code>Hashable a</code> instance must satisfy the law. Therefore, the two arrays have equal hashes, and so the <code>Hashable (Array a)</code> obeys the type class law as well.</p>
@@ -2103,7 +2288,7 @@ secondElement xs = head (tail xs)
 <h2 id="generalizing-function-application"><a class="header" href="#generalizing-function-application">Generalizing Function Application</a></h2>
 <p>To explain the concept of an <em>applicative functor</em>, let's consider the type constructor <code>Maybe</code> that we met earlier.</p>
 <p>The source code for this module defines a function <code>address</code> which has the following type:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">address :: String -&gt; String -&gt; String -&gt; Address
 </code></pre>
 <p>This function is used to construct a value of type <code>Address</code> from three strings: a street name, a city, and a state.</p>
 <p>We can apply this function easily and see the result in PSCi:</p>
@@ -2344,17 +2529,27 @@ Nothing
 </ol>
 <h2 id="applicative-validation-1"><a class="header" href="#applicative-validation-1">Applicative Validation</a></h2>
 <p>The source code for this chapter defines several data types which might be used in an address book application. The details are omitted here, but the key functions which are exported by the <code>Data.AddressBook</code> module have the following types:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">address :: String -&gt; String -&gt; String -&gt; Address
 
+phoneNumber :: PhoneType -&gt; String -&gt; PhoneNumber
 
-
-
+person :: String -&gt; String -&gt; Address -&gt; Array PhoneNumber -&gt; Person
 </code></pre>
 <p>where <code>PhoneType</code> is defined as an algebraic data type:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">data PhoneType
+  = HomePhone
+  | WorkPhone
+  | CellPhone
+  | OtherPhone
 </code></pre>
 <p>These functions can be used to construct a <code>Person</code> representing an address book entry. For example, the following value is defined in <code>Data.AddressBook</code>:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">examplePerson :: Person
+examplePerson =
+  person &quot;John&quot; &quot;Smith&quot;
+    (address &quot;123 Fake St.&quot; &quot;FakeTown&quot; &quot;CA&quot;)
+    [ phoneNumber HomePhone &quot;555-555-5555&quot;
+    , phoneNumber CellPhone &quot;555-555-0000&quot;
+    ]
 </code></pre>
 <p>Test this value in PSCi (this result has been formatted):</p>
 <pre><code class="language-text">&gt; import Data.AddressBook
@@ -2378,12 +2573,23 @@ Nothing
 }
 </code></pre>
 <p>We saw in a previous section how we could use the <code>Either String</code> functor to validate a data structure of type <code>Person</code>. For example, provided functions to validate the two names in the structure, we might validate the entire data structure as follows:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">nonEmpty1 :: String -&gt; Either String String
+nonEmpty1 &quot;&quot;     = Left &quot;Field cannot be empty&quot;
+nonEmpty1 value  = Right value
 
-
+validatePerson1 :: Person -&gt; Either String Person
+validatePerson1 p =
+  person &lt;$&gt; nonEmpty1 p.firstName
+         &lt;*&gt; nonEmpty1 p.lastName
+         &lt;*&gt; pure p.homeAddress
+         &lt;*&gt; pure p.phones
 </code></pre>
 <p>or with <em>applicative do</em></p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">validatePerson1Ado :: Person -&gt; Either String Person
+validatePerson1Ado p = ado
+  f &lt;- nonEmpty1 p.firstName
+  l &lt;- nonEmpty1 p.lastName
+  in person f l p.homeAddress p.phones
 </code></pre>
 <p>In the first two lines, we use the <code>nonEmpty1</code> function to validate a non-empty string. <code>nonEmpty1</code> returns an error indicated with the <code>Left</code> constructor if its input is empty, otherwise it returns the value wrapped with the <code>Right</code> constructor.</p>
 <p>The final lines do not perform any validation but simply provide the <code>address</code> and <code>phones</code> fields to the <code>person</code> function as the remaining arguments.</p>
@@ -2395,16 +2601,31 @@ Nothing
 <p>There is another applicative functor which is provided by the <code>validation</code> library. This functor is called <code>V</code>, and it provides the ability to return errors in any <em>semigroup</em>. For example, we can use <code>V (Array String)</code> to return an array of <code>String</code>s as errors, concatenating new errors onto the end of the array.</p>
 <p>The <code>Data.AddressBook.Validation</code> module uses the <code>V (Array String)</code> applicative functor to validate the data structures in the <code>Data.AddressBook</code> module.</p>
 <p>Here is an example of a validator taken from the <code>Data.AddressBook.Validation</code> module:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">type Errors
+  = Array String
 
+nonEmpty :: String -&gt; String -&gt; V Errors String
+nonEmpty field &quot;&quot;     = invalid [ &quot;Field '&quot; &lt;&gt; field &lt;&gt; &quot;' cannot be empty&quot; ]
+nonEmpty _     value  = pure value
 
+lengthIs :: String -&gt; Int -&gt; String -&gt; V Errors String
+lengthIs field len value | length value /= len =
+  invalid [ &quot;Field '&quot; &lt;&gt; field &lt;&gt; &quot;' must have length &quot; &lt;&gt; show len ]
+lengthIs _     _   value = pure value
 
-
-
-
+validateAddress :: Address -&gt; V Errors Address
+validateAddress a =
+  address &lt;$&gt; nonEmpty &quot;Street&quot;  a.street
+          &lt;*&gt; nonEmpty &quot;City&quot;    a.city
+          &lt;*&gt; lengthIs &quot;State&quot; 2 a.state
 </code></pre>
 <p>or with <em>applicative do</em></p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">validateAddressAdo :: Address -&gt; V Errors Address
+validateAddressAdo a = ado
+  street &lt;- nonEmpty &quot;Street&quot;  a.street
+  city   &lt;- nonEmpty &quot;City&quot;    a.city
+  state  &lt;- lengthIs &quot;State&quot; 2 a.state
+  in address street city state
 </code></pre>
 <p><code>validateAddress</code> validates an <code>Address</code> structure. It checks that the <code>street</code> and <code>city</code> fields are non-empty, and checks that the string in the <code>state</code> field has length 2.</p>
 <p>Notice how the <code>nonEmpty</code> and <code>lengthIs</code> validator functions both use the <code>invalid</code> function provided by the <code>Data.Validation</code> module to indicate an error. Since we are working in the <code>Array String</code> semigroup, <code>invalid</code> takes an array of strings as its argument.</p>
@@ -2426,14 +2647,24 @@ Nothing
 <p>This time, we receive an array of all validation errors.</p>
 <h2 id="regular-expression-validators"><a class="header" href="#regular-expression-validators">Regular Expression Validators</a></h2>
 <p>The <code>validatePhoneNumber</code> function uses a regular expression to validate the form of its argument. The key is a <code>matches</code> validation function, which uses a <code>Regex</code> from the <code>Data.String.Regex</code> module to validate its input:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">matches :: String -&gt; Regex -&gt; String -&gt; V Errors String
+matches _     regex value | test regex value
+                          = pure value
+matches field _     _     = invalid [ &quot;Field '&quot; &lt;&gt; field &lt;&gt; &quot;' did not match the required format&quot; ]
 </code></pre>
 <p>Again, notice how <code>pure</code> is used to indicate successful validation, and <code>invalid</code> is used to signal an array of errors.</p>
 <p><code>validatePhoneNumber</code> is built from the <code>matches</code> function in the same way as before:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">validatePhoneNumber :: PhoneNumber -&gt; V Errors PhoneNumber
+validatePhoneNumber pn =
+  phoneNumber &lt;$&gt; pure pn.&quot;type&quot;
+              &lt;*&gt; matches &quot;Number&quot; phoneNumberRegex pn.number
 </code></pre>
 <p>or with <em>applicative do</em></p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">validatePhoneNumberAdo :: PhoneNumber -&gt; V Errors PhoneNumber
+validatePhoneNumberAdo pn = ado
+  tpe    &lt;- pure pn.&quot;type&quot;
+  number &lt;- matches &quot;Number&quot; phoneNumberRegex pn.number
+  in phoneNumber tpe number
 </code></pre>
 <p>Again, try running this validator against some valid and invalid inputs in PSCi:</p>
 <pre><code class="language-text">&gt; validatePhoneNumber $ phoneNumber HomePhone &quot;555-555-5555&quot;
@@ -2450,12 +2681,27 @@ invalid ([&quot;Field 'Number' did not match the required format&quot;])
 </ol>
 <h2 id="traversable-functors"><a class="header" href="#traversable-functors">Traversable Functors</a></h2>
 <p>The remaining validator is <code>validatePerson</code>, which combines the validators we have seen so far to validate an entire <code>Person</code> structure, including the following new <code>validatePhoneNumbers</code> function:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">validatePhoneNumbers :: String -&gt; Array PhoneNumber -&gt; V Errors (Array PhoneNumber)
+validatePhoneNumbers field []      =
+  invalid [ &quot;Field '&quot; &lt;&gt; field &lt;&gt; &quot;' must contain at least one value&quot; ]
+validatePhoneNumbers _     phones  =
+  traverse validatePhoneNumber phones
 
-
+validatePerson :: Person -&gt; V Errors Person
+validatePerson p =
+  person &lt;$&gt; nonEmpty &quot;First Name&quot; p.firstName
+         &lt;*&gt; nonEmpty &quot;Last Name&quot; p.lastName
+         &lt;*&gt; validateAddress p.homeAddress
+         &lt;*&gt; validatePhoneNumbers &quot;Phone Numbers&quot; p.phones
 </code></pre>
 <p>or with <em>applicative do</em></p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">validatePersonAdo :: Person -&gt; V Errors Person
+validatePersonAdo p = ado
+  firstName &lt;- nonEmpty &quot;First Name&quot; p.firstName
+  lastName  &lt;- nonEmpty &quot;Last Name&quot; p.lastName
+  address   &lt;- validateAddress p.homeAddress
+  numbers   &lt;- validatePhoneNumbers &quot;Phone Numbers&quot; p.phones
+  in person firstName lastName address numbers
 </code></pre>
 <p><code>validatePhoneNumbers</code> uses a new function we haven't seen before - <code>traverse</code>.</p>
 <p><code>traverse</code> is defined in the <code>Data.Traversable</code> module, in the <code>Traversable</code> type class:</p>
@@ -2513,7 +2759,7 @@ pure ((Just &quot;Testing&quot;))
 </code></pre>
 <p>Recall from the previous chapter that you may either write these instances manually or let the compiler derive them for you.</p>
 <p>There are many &quot;correct&quot; formatting options for <code>Show</code> output. The test for this exercise expects the following whitespace style. This happens to match the default formatting of generic show, so you only need to make note of this if you're planning on writing this instance manually.</p>
-<pre><code>(Branch (Branch Leaf 8 Leaf) 42 Leaf)
+<pre><code class="language-haskell">(Branch (Branch Leaf 8 Leaf) 42 Leaf)
 </code></pre>
 </li>
 <li>
@@ -2579,7 +2825,13 @@ pure ((Just &quot;Testing&quot;))
 import Control.Plus (empty)
 import Data.Array ((..))
 
-
+countThrows :: Int -&gt; Array (Array Int)
+countThrows n = do
+  x &lt;- 1 .. 6
+  y &lt;- 1 .. 6
+  if x + y == n
+    then pure [ x, y ]
+    else empty
 </code></pre>
 <p>We can see that this function works in PSCi:</p>
 <pre><code class="language-text">&gt; import Test.Examples
@@ -2592,7 +2844,7 @@ import Data.Array ((..))
 </code></pre>
 <p>In the last chapter, we formed an intuition for the <code>Maybe</code> applicative functor, embedding PureScript functions into a larger programming language supporting <em>optional values</em>. In the same way, we can form an intuition for the <em>array monad</em>, embedding PureScript functions into a larger programming language supporting <em>non-deterministic choice</em>.</p>
 <p>In general, a <em>monad</em> for some type constructor <code>m</code> provides a way to use do notation with values of type <code>m a</code>. Note that in the array comprehension above, every line contains a computation of type <code>Array a</code> for some type <code>a</code>. In general, every line of a do notation block will contain a computation of type <code>m a</code> for some type <code>a</code> and our monad <code>m</code>. The monad <code>m</code> must be the same on every line (i.e. we fix the side-effect), but the types <code>a</code> can differ (i.e. individual computations can have different result types).</p>
-<p>Here is another example of do notation, this type applied to the type constructor <code>Maybe</code>. Suppose we have some type <code>XML</code> representing XML nodes, and a function</p>
+<p>Here is another example of do notation, this time applied to the type constructor <code>Maybe</code>. Suppose we have some type <code>XML</code> representing XML nodes, and a function</p>
 <pre><code class="language-hs">child :: XML -&gt; String -&gt; Maybe XML
 </code></pre>
 <p>which looks for a child element of a node, and returns <code>Nothing</code> if no such element exists.</p>
@@ -2709,7 +2961,9 @@ foldl :: forall   a b.            (a -&gt; b -&gt;   a) -&gt; a -&gt; List b -&g
 </code></pre>
 <p>Note that this implementation is almost identical to that of <code>foldl</code> on lists, with the exception of do notation.</p>
 <p>We can define and test this function in PSCi. Here is an example - suppose we defined a &quot;safe division&quot; function on integers, which tested for division by zero and used the <code>Maybe</code> type constructor to indicate failure:</p>
-<pre><code class="language-hs">
+<pre><code class="language-hs">safeDivide :: Int -&gt; Int -&gt; Maybe Int
+safeDivide _ 0 = Nothing
+safeDivide a b = Just (a / b)
 </code></pre>
 <p>Then we can use <code>foldM</code> to express iterated safe division:</p>
 <pre><code class="language-text">&gt; import Test.Examples
@@ -2825,8 +3079,6 @@ lift2 f a b = f &lt;$&gt; a &lt;*&gt; b
 </code></pre>
 <blockquote>
 <p><em>Aside:</em> You may encounter IDE suggestions for the more general (and more elaborately typed) <code>log</code> function from <code>Effect.Class.Console</code>. This is interchangeable with the one from <code>Effect.Console</code> when dealing with the basic <code>Effect</code> monad. Reasons for the more general version will become clearer after reading about &quot;Monad Transformers&quot; in the &quot;Monadic Adventures&quot; chapter. For the curious (and impatient), this works because there's a <code>MonadEffect</code> instance for <code>Effect</code>.</p>
-</blockquote>
-<blockquote>
 <pre><code class="language-hs">log :: forall m. MonadEffect m =&gt; String -&gt; m Unit
 </code></pre>
 </blockquote>
@@ -2851,7 +3103,7 @@ main = do
 main = random &gt;&gt;= logShow
 </code></pre>
 <p>Try running this yourself with:</p>
-<pre><code>spago run --main Test.Random
+<pre><code class="language-shell">spago run --main Test.Random
 </code></pre>
 <p>You should see a randomly chosen number between <code>0.0</code> and <code>1.0</code> printed to the console.</p>
 <blockquote>
@@ -2873,7 +3125,7 @@ main = do
   log lines
 </code></pre>
 <p>We encounter the following exception:</p>
-<pre><code>    throw err;
+<pre><code class="language-text">    throw err;
     ^
 Error: ENOENT: no such file or directory, open 'iDoNotExist.md'
 ...
@@ -3055,7 +3307,7 @@ simulate x0 v0 time =
 <p>We are going to build a form which will allow a user to add a new entry into our address book. The form will contain text boxes for the various fields (first name, last name, city, state, etc.), and an area in which validation errors will be displayed. As the user types text into the text boxes, the validation errors will be updated.</p>
 <p>To keep things simple, the form will have a fixed shape: the different phone number types (home, cell, work, other) will be expanded into separate text boxes.</p>
 <p>You can launch the web app from the <code>exercises/chapter8</code> directory with the following commands:</p>
-<pre><code>$ npm install
+<pre><code class="language-shell">$ npm install
 $ npx spago build
 $ npx parcel src/index.html --open
 </code></pre>
@@ -3084,7 +3336,25 @@ main();
 </code></pre>
 <p>It calls our generated JavaScript equivalent of the <code>main</code> function of <code>module Main</code> (<code>src/main.purs</code>). Recall that <code>spago build</code> puts all generated JavaScript in the <code>output</code> directory.</p>
 <p>The <code>main</code> function uses the DOM and HTML APIs to render our address book component within the <code>container</code> element we defined in <code>index.html</code>:</p>
-<pre><code class="language-hs">
+<pre><code class="language-hs">main :: Effect Unit
+main = do
+  log &quot;Rendering address book component&quot;
+  -- Get window object
+  w &lt;- window
+  -- Get window's HTML document
+  doc &lt;- document w
+  -- Get &quot;container&quot; element in HTML
+  ctr &lt;- getElementById &quot;container&quot; $ toNonElementParentNode doc
+  case ctr of
+    Nothing -&gt; throw &quot;Container element not found.&quot;
+    Just c -&gt; do
+      -- Create AddressBook react component
+      addressBookApp &lt;- mkAddressBookApp
+      let
+        -- Create JSX node from react component. Pass-in empty props
+        app = element addressBookApp {}
+      -- Render AddressBook JSX node in DOM &quot;container&quot; element
+      D.render app c
 </code></pre>
 <p>Note that these three lines:</p>
 <pre><code class="language-hs">w &lt;- window
@@ -3198,7 +3468,18 @@ setPerson :: (state -&gt; state) -&gt; Effect Unit
 <li><code>div'</code>: Same as <code>div</code>, but returns the <code>ReactComponent</code> before conversion to <code>JSX</code>.</li>
 </ul>
 <p>To display validation errors (if any) at the top of our form, we create a <code>renderValidationErrors</code> helper function that turns the <code>Errors</code> structure into an array of JSX. This array is prepended to the rest of our form.</p>
-<pre><code class="language-hs">
+<pre><code class="language-hs">renderValidationErrors :: Errors -&gt; Array R.JSX
+renderValidationErrors [] = []
+renderValidationErrors xs =
+  let
+    renderError :: String -&gt; R.JSX
+    renderError err = D.li_ [ D.text err ]
+  in
+    [ D.div
+        { className: &quot;alert alert-danger row&quot;
+        , children: [ D.ul_ (map renderError xs) ]
+        }
+    ]
 </code></pre>
 <p>Note that since we are simply manipulating regular data structures here, we can use functions like <code>map</code> to build up more interesting elements:</p>
 <pre><code class="language-hs">children: [ D.ul_ (map renderError xs)]
@@ -3207,7 +3488,34 @@ setPerson :: (state -&gt; state) -&gt; Effect Unit
 <pre><code class="language-hs">className: &quot;alert alert-danger row&quot;
 </code></pre>
 <p>A second helper function is <code>formField</code>, which creates a text input for a single form field:</p>
-<pre><code class="language-hs">
+<pre><code class="language-hs">formField :: String -&gt; String -&gt; String -&gt; (String -&gt; Effect Unit) -&gt; R.JSX
+formField name placeholder value setValue =
+  D.label
+    { className: &quot;form-group row&quot;
+    , children:
+        [ D.div
+            { className: &quot;col-sm col-form-label&quot;
+            , children: [ D.text name ]
+            }
+        , D.div
+            { className: &quot;col-sm&quot;
+            , children:
+                [ D.input
+                    { className: &quot;form-control&quot;
+                    , placeholder
+                    , value
+                    , onChange:
+                        let
+                          handleValue :: Maybe String -&gt; Effect Unit
+                          handleValue (Just v) = setValue v
+                          handleValue Nothing  = pure unit
+                        in
+                          handler targetValue handleValue
+                    }
+                ]
+            }
+        ]
+    }
 </code></pre>
 <p>Putting the <code>input</code> and display <code>text</code> in a <code>label</code> aids in accessibility for screen readers.</p>
 <p>The <code>onChange</code> attribute allows us to describe how to respond to user input. We use the <code>handler</code> function, which has the following type:</p>
@@ -3285,7 +3593,7 @@ type Errors = Array ValidationError
 <li><code>affjax</code> - HTTP requests with AJAX and <code>Aff</code>.</li>
 <li><code>parallel</code> - parallel execution of <code>Aff</code>.</li>
 </ul>
-<p>When running outside of the browser (such as in our Node.js environment), the <code>affjax</code> library requires the <code>xhr2</code> NPM module. Install that by running:</p>
+<p>When running outside of the browser (such as in our Node.js environment), the <code>affjax</code> library requires the <code>xhr2</code> NPM module, which is listed as dependency in the <code>package.json</code> of this chapter. Install that by running:</p>
 <pre><code class="language-shell">$ npm install
 </code></pre>
 <h2 id="asynchronous-javascript"><a class="header" href="#asynchronous-javascript">Asynchronous JavaScript</a></h2>
@@ -3310,7 +3618,25 @@ copyFile('file1.txt', 'file2.txt')
 </ul>
 <h2 id="asynchronous-purescript"><a class="header" href="#asynchronous-purescript">Asynchronous PureScript</a></h2>
 <p>The <code>Aff</code> monad in PureScript offers similar ergonomics of JavaScript's <code>async</code>/<code>await</code> syntax. Here is the same <code>copyFile</code> example from before, but rewritten in PureScript using <code>Aff</code>:</p>
-<pre><code class="language-hs">
+<pre><code class="language-hs">import Prelude
+import Data.Either (Either(..))
+import Effect.Aff (Aff, attempt, message)
+import Effect.Class.Console (log)
+import Node.Encoding (Encoding(..))
+import Node.FS.Aff (readTextFile, writeTextFile)
+import Node.Path (FilePath)
+
+copyFile :: FilePath -&gt; FilePath -&gt; Aff Unit
+copyFile file1 file2 = do
+  my_data &lt;- readTextFile UTF8 file1
+  writeTextFile UTF8 file2 my_data
+
+main :: Aff Unit
+main = do
+  result &lt;- attempt $ copyFile &quot;file1.txt&quot; &quot;file2.txt&quot;
+  case result of
+    Left e -&gt; log $ &quot;There was a problem with copyFile: &quot; &lt;&gt; message e
+    _ -&gt; pure unit
 </code></pre>
 <p>It is also possible to re-write the above snippet using callbacks or synchronous functions (for example with <code>Node.FS.Async</code> and <code>Node.FS.Sync</code> respectively), but those share the same downsides as discussed earlier with JavaScript, and so that coding style is not recommended.</p>
 <p>The syntax for working with <code>Aff</code> is very similar to working with <code>Effect</code>. They are both monads, and can therefore be written with do notation.</p>
@@ -3350,7 +3676,18 @@ copyFile('file1.txt', 'file2.txt')
 <p>The <code>affjax</code> library offers a convenient way to make asynchronous AJAX HTTP requests with <code>Aff</code>. Depending on what environment you are targeting you need to use either the <a href="https://github.com/purescript-contrib/purescript-affjax-web">purescript-affjax-web</a> or the <a href="https://github.com/purescript-contrib/purescript-affjax-node">purescript-affjax-node</a> library.
 In the rest of this chapter we will be targeting node and thus using <code>purescript-affjax-node</code>.
 Consult the <a href="https://pursuit.purescript.org/packages/purescript-affjax">Affjax docs</a> for more usage information. Here is an example that makes HTTP GET requests at a provided URL and returns the response body or an error message:</p>
-<pre><code class="language-hs">
+<pre><code class="language-hs">import Prelude
+import Affjax.Node as AN
+import Affjax.ResponseFormat as ResponseFormat
+import Data.Either (Either(..))
+import Effect.Aff (Aff)
+
+getUrl :: String -&gt; Aff String
+getUrl url = do
+  result &lt;- AN.get ResponseFormat.string url
+  pure case result of
+    Left err -&gt; &quot;GET /api response failed to decode: &quot; &lt;&gt; AN.printError err
+    Right response -&gt; response.body
 </code></pre>
 <p>When calling this in the repl, <code>launchAff_</code> is required to convert the <code>Aff</code> to a repl-compatible <code>Effect</code>:</p>
 <pre><code class="language-shell">$ spago repl
@@ -3390,7 +3727,22 @@ unit
 <p>To demonstrate the difference between sequential and parallel execution, we'll create an array of 100 10-millisecond delays, then execute those delays with both techniques.
 You'll notice in the repl that <code>seqDelay</code> is much slower than <code>parDelay</code>.
 Note that parallel execution is enabled by simply replacing <code>sequence_</code> with <code>parSequence_</code>.</p>
-<pre><code class="language-hs">
+<pre><code class="language-hs">import Prelude
+
+import Control.Parallel (parSequence_)
+import Data.Array (replicate)
+import Data.Foldable (sequence_)
+import Effect (Effect)
+import Effect.Aff (Aff, Milliseconds(..), delay, launchAff_)
+
+delayArray :: Array (Aff Unit)
+delayArray = replicate 100 $ delay $ Milliseconds 10.0
+
+seqDelay :: Effect Unit
+seqDelay = launchAff_ $ sequence_ delayArray
+
+parDelay :: Effect Unit
+parDelay = launchAff_ $ parSequence_ delayArray
 </code></pre>
 <pre><code class="language-shell">$ spago repl
 
@@ -3403,7 +3755,21 @@ unit
 unit
 </code></pre>
 <p>Here's a more real-world example of making multiple HTTP requests in parallel. We're reusing our <code>getUrl</code> function to fetch information from two users in parallel. Note that <code>parTraverse</code> (the parallel version of <code>traverse</code>) is used in this case. This example would also work fine with <code>traverse</code> instead, but it will be slower.</p>
-<pre><code class="language-hs">
+<pre><code class="language-hs">import Prelude
+
+import Control.Parallel (parTraverse)
+import Effect (Effect)
+import Effect.Aff (launchAff_)
+import Effect.Class.Console (logShow)
+import Test.HTTP (getUrl)
+
+fetchPar :: Effect Unit
+fetchPar =
+  launchAff_ do
+    let
+      urls = map (\n -&gt; &quot;https://reqres.in/api/users/&quot; &lt;&gt; show n) [ 1, 2 ]
+    res &lt;- parTraverse getUrl urls
+    logShow res
 </code></pre>
 <pre><code class="language-shell">$ spago repl
 
@@ -3519,7 +3885,9 @@ export const _encodeURIComponent = encodeURIComponent;
 <p><code>test/Examples.js</code>:</p>
 <pre><code class="language-js">&quot;use strict&quot;;
 
-
+export const square = function (n) {
+  return n * n;
+};
 </code></pre>
 <p><code>test/Examples.purs</code>:</p>
 <pre><code class="language-hs">module Test.Examples where
@@ -3534,15 +3902,20 @@ foreign import square :: Number -&gt; Number
 </code></pre>
 <h2 id="functions-of-multiple-arguments"><a class="header" href="#functions-of-multiple-arguments">Functions of Multiple Arguments</a></h2>
 <p>Let's rewrite our <code>diagonal</code> function from Chapter 2 in a foreign module. This function calculates the diagonal of a right-angled triangle.</p>
-<pre><code class="language-hs">
+<pre><code class="language-hs">foreign import diagonal :: Number -&gt; Number -&gt; Number
 </code></pre>
 <p>Recall that functions in PureScript are <em>curried</em>. <code>diagonal</code> is a function that takes a <code>Number</code> and returns a <em>function</em>, that takes a <code>Number</code> and returns a <code>Number</code>.</p>
-<pre><code class="language-js">
+<pre><code class="language-js">export const diagonal = function (w) {
+  return function (h) {
+    return Math.sqrt(w * w + h * h);
+  };
+};
 </code></pre>
 <p>Or with ES6 arrow syntax (see ES6 note below).</p>
-<pre><code class="language-js">
+<pre><code class="language-js">export const diagonalArrow = w =&gt; h =&gt;
+  Math.sqrt(w * w + h * h);
 </code></pre>
-<pre><code class="language-hs">
+<pre><code class="language-hs">foreign import diagonalArrow :: Number -&gt; Number -&gt; Number
 </code></pre>
 <pre><code class="language-text">$ spago repl
 
@@ -3554,10 +3927,12 @@ foreign import square :: Number -&gt; Number
 </code></pre>
 <h2 id="uncurried-functions"><a class="header" href="#uncurried-functions">Uncurried Functions</a></h2>
 <p>Writing curried functions in JavaScript isn't always feasible, despite being scarcely idiomatic. A typical multi-argument JavaScript function would be of the <em>uncurried</em> form:</p>
-<pre><code class="language-js">
+<pre><code class="language-js">export const diagonalUncurried = function (w, h) {
+  return Math.sqrt(w * w + h * h);
+};
 </code></pre>
 <p>The module <code>Data.Function.Uncurried</code> exports <em>wrapper</em> types and utility functions to work with uncurried functions.</p>
-<pre><code class="language-hs">
+<pre><code class="language-hs">foreign import diagonalUncurried :: Fn2 Number Number Number
 </code></pre>
 <p>Inspecting the type constructor <code>Fn2</code>:</p>
 <pre><code class="language-text">$ spago repl
@@ -3579,10 +3954,12 @@ Type -&gt; Type -&gt; Type -&gt; Type
 <h2 id="a-note-about-uncurried-functions"><a class="header" href="#a-note-about-uncurried-functions">A Note About Uncurried Functions</a></h2>
 <p>PureScript's curried functions has certain advantages. It allows us to partially apply functions, and to give type class instances for function types - but it comes with a performance penalty. For performance critical code, it is sometimes necessary to define uncurried JavaScript functions which accept multiple arguments.</p>
 <p>We can also create uncurried functions from PureScript. For a function of two arguments, we can use the <code>mkFn2</code> function.</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">uncurriedAdd :: Fn2 Int Int Int
+uncurriedAdd = mkFn2 \n m -&gt; m + n
 </code></pre>
 <p>We can apply the uncurried function of two arguments by using <code>runFn2</code> as before:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">uncurriedSum :: Int
+uncurriedSum = runFn2 uncurriedAdd 3 10
 </code></pre>
 <p>The key here is that the compiler <em>inlines</em> the <code>mkFn2</code> and <code>runFn2</code> functions whenever they are fully applied. The result is that the generated code is very compact:</p>
 <pre><code class="language-javascript">var uncurriedAdd = function (n, m) {
@@ -3592,7 +3969,11 @@ Type -&gt; Type -&gt; Type -&gt; Type
 var uncurriedSum = uncurriedAdd(3, 10);
 </code></pre>
 <p>For contrast, here is a traditional curried function:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">curriedAdd :: Int -&gt; Int -&gt; Int
+curriedAdd n m = m + n
+
+curriedSum :: Int
+curriedSum = curriedAdd 3 10
 </code></pre>
 <p>and the resulting generated code, which is less compact due to the nested functions:</p>
 <pre><code class="language-javascript">var curriedAdd = function (n) {
@@ -4001,9 +4382,11 @@ foreign import addComplexJson :: Complex -&gt; Complex -&gt; Json
 export const addComplexJson = addComplexBroken
 </code></pre>
 <p>And then write a wrapper to decode the returned foreign <code>Json</code> value:</p>
-<pre><code class="language-hs">
+<pre><code class="language-hs">cumulativeSumsDecoded :: Array Int -&gt; Either JsonDecodeError (Array Int)
+cumulativeSumsDecoded arr = decodeJson $ cumulativeSumsJson arr
 
-
+addComplexDecoded :: Complex -&gt; Complex -&gt; Either JsonDecodeError Complex
+addComplexDecoded a b = decodeJson $ addComplexJson a b
 </code></pre>
 <p>Then any values that can't be successfully decoded to our return type appear as a <code>Left</code> error <code>String</code>:</p>
 <pre><code class="language-text">$ spago repl
@@ -4033,7 +4416,10 @@ export const addComplexJson = addComplex
 </code></pre>
 <p>Using JSON is also the easiest way to pass other structural types, such as <code>Map</code> and <code>Set</code> through the FFI. Note that since JSON only consists of booleans, numbers, strings, arrays, and objects of other JSON values, we can't write a <code>Map</code> and <code>Set</code> directly in JSON. But we can represent these structures as arrays (assuming the keys and values can also be represented in JSON), and then decode them back to <code>Map</code> or <code>Set</code>.</p>
 <p>Here's an example of a foreign function signature that modifies a <code>Map</code> of <code>String</code> keys and <code>Int</code> values, along with the wrapper function that handles JSON encoding and decoding.</p>
-<pre><code class="language-hs">
+<pre><code class="language-hs">foreign import mapSetFooJson :: Json -&gt; Json
+
+mapSetFoo :: Map String Int -&gt; Either JsonDecodeError (Map String Int)
+mapSetFoo = encodeJson &gt;&gt;&gt; mapSetFooJson &gt;&gt;&gt; decodeJson
 </code></pre>
 <p>Note that this is a prime use case for function composition. Both of these alternatives are equivalent to the above:</p>
 <pre><code class="language-hs">mapSetFoo :: Map String Int -&gt; Either JsonDecodeError (Map String Int)
@@ -4156,9 +4542,15 @@ validateAndSave = do
     Data.Argonaut.Encode.Class.EncodeJson PhoneType
 </code></pre>
 <p>This is because <code>PhoneType</code> in the <code>Person</code> record needs an <code>EncodeJson</code> instance. We'll just derive a generic encode instance, and a decode instance too while we're at it. More information how this works is available in the argonaut docs:</p>
-<pre><code class="language-hs">
+<pre><code class="language-hs">import Data.Argonaut (class DecodeJson, class EncodeJson)
+import Data.Argonaut.Decode.Generic (genericDecodeJson)
+import Data.Argonaut.Encode.Generic (genericEncodeJson)
+import Data.Generic.Rep (class Generic)
 
+derive instance genericPhoneType :: Generic PhoneType _
 
+instance encodeJsonPhoneType :: EncodeJson PhoneType where encodeJson = genericEncodeJson
+instance decodeJsonPhoneType :: DecodeJson PhoneType where decodeJson = genericDecodeJson
 </code></pre>
 <p>Now we can save our <code>person</code> to local storage, but this isn't very useful unless we can retrieve the data. We'll tackle that next.</p>
 <p>We'll start with retrieving the &quot;person&quot; string from local storage:</p>
@@ -4227,8 +4619,8 @@ alert $ &quot;Error: &quot; &lt;&gt; err &lt;&gt; &quot;. Loading examplePerson&
 <li>We saw how to safely serialize and deserialize JSON data.</li>
 </ul>
 <p>For more examples, the <code>purescript</code>, <code>purescript-contrib</code> and <code>purescript-node</code> GitHub organizations provide plenty of examples of libraries which use the FFI. In the remaining chapters, we will see some of these libraries put to use to solve real-world problems in a type-safe way.</p>
-<h1 id="addendum"><a class="header" href="#addendum">Addendum</a></h1>
-<h2 id="calling-purescript-from-javascript"><a class="header" href="#calling-purescript-from-javascript">Calling PureScript from JavaScript</a></h2>
+<h2 id="addendum"><a class="header" href="#addendum">Addendum</a></h2>
+<h3 id="calling-purescript-from-javascript"><a class="header" href="#calling-purescript-from-javascript">Calling PureScript from JavaScript</a></h3>
 <p>Calling a PureScript function from JavaScript is very simple, at least for functions with simple types.</p>
 <p>Let's take the following simple module as an example:</p>
 <pre><code class="language-haskell">module Test where
@@ -4250,7 +4642,7 @@ Test.gcd(15)(20);
 <pre><code class="language-javascript">var Test = PS.Test;
 Test.gcd(15)(20);
 </code></pre>
-<h2 id="understanding-name-generation"><a class="header" href="#understanding-name-generation">Understanding Name Generation</a></h2>
+<h3 id="understanding-name-generation"><a class="header" href="#understanding-name-generation">Understanding Name Generation</a></h3>
 <p>PureScript aims to preserve names during code generation as much as possible. In particular, most identifiers which are neither PureScript nor JavaScript keywords can be expected to be preserved, at least for names of top-level declarations.</p>
 <p>If you decide to use a JavaScript keyword as an identifier, the name will be escaped with a double dollar symbol. For example,</p>
 <pre><code class="language-haskell">null = []
@@ -4265,18 +4657,18 @@ Test.gcd(15)(20);
 <pre><code class="language-javascript">var example$prime = 100;
 </code></pre>
 <p>Where compiled PureScript code is intended to be called from JavaScript, it is recommended that identifiers only use alphanumeric characters, and avoid JavaScript keywords. If user-defined operators are provided for use in PureScript code, it is good practice to provide an alternative function with an alphanumeric name for use in JavaScript.</p>
-<h2 id="runtime-data-representation"><a class="header" href="#runtime-data-representation">Runtime Data Representation</a></h2>
+<h3 id="runtime-data-representation"><a class="header" href="#runtime-data-representation">Runtime Data Representation</a></h3>
 <p>Types allow us to reason at compile-time that our programs are &quot;correct&quot; in some sense - that is, they will not break at runtime. But what does that mean? In PureScript, it means that the type of an expression should be compatible with its representation at runtime.</p>
 <p>For that reason, it is important to understand the representation of data at runtime to be able to use PureScript and JavaScript code together effectively. This means that for any given PureScript expression, we should be able to understand the behavior of the value it will evaluate to at runtime.</p>
 <p>The good news is that PureScript expressions have particularly simple representations at runtime. It should always be possible to understand the runtime data representation of an expression by considering its type.</p>
 <p>For simple types, the correspondence is almost trivial. For example, if an expression has the type <code>Boolean</code>, then its value <code>v</code> at runtime should satisfy <code>typeof v === 'boolean'</code>. That is, expressions of type <code>Boolean</code> evaluate to one of the (JavaScript) values <code>true</code> or <code>false</code>. In particular, there is no PureScript expression of type <code>Boolean</code> which evaluates to <code>null</code> or <code>undefined</code>.</p>
-<p>A similar law holds for expressions of type <code>Int</code> <code>Number</code> and <code>String</code> - expressions of type <code>Int</code> or <code>Number</code> evaluate to non-null JavaScript numbers, and expressions of type <code>String</code> evaluate to non-null JavaScript strings. Expressions of type <code>Int</code> will evaluate to integers at runtime, even though they cannot not be distinguished from values of type <code>Number</code> by using <code>typeof</code>.</p>
+<p>A similar law holds for expressions of type <code>Int</code>, <code>Number</code>, and <code>String</code> - expressions of type <code>Int</code> or <code>Number</code> evaluate to non-null JavaScript numbers, and expressions of type <code>String</code> evaluate to non-null JavaScript strings. Expressions of type <code>Int</code> will evaluate to integers at runtime, even though they cannot be distinguished from values of type <code>Number</code> by using <code>typeof</code>.</p>
 <p>What about <code>Unit</code>? Well, since <code>Unit</code> has only one inhabitant (<code>unit</code>) and its value is not observable, it doesn't actually matter what it's represented with at runtime. Old code tends to represent it using <code>{}</code>. Newer code, however, tends to use <code>undefined</code>. So, although it doesn't really matter what you use to represent <code>Unit</code>, it is recommended to use <code>undefined</code> (not returning anything from a function also returns <code>undefined</code>).</p>
 <p>What about some more complex types?</p>
 <p>As we have already seen, PureScript functions correspond to JavaScript functions of a single argument. More precisely, if an expression <code>f</code> has type <code>a -&gt; b</code> for some types <code>a</code> and <code>b</code>, and an expression <code>x</code> evaluates to a value with the correct runtime representation for type <code>a</code>, then <code>f</code> evaluates to a JavaScript function, which when applied to the result of evaluating <code>x</code>, has the correct runtime representation for type <code>b</code>. As a simple example, an expression of type <code>String -&gt; String</code> evaluates to a function which takes non-null JavaScript strings to non-null JavaScript strings.</p>
 <p>As you might expect, PureScript's arrays correspond to JavaScript arrays. But remember - PureScript arrays are homogeneous, so every element has the same type. Concretely, if a PureScript expression <code>e</code> has type <code>Array a</code> for some type <code>a</code>, then <code>e</code> evaluates to a (non-null) JavaScript array, all of whose elements have the correct runtime representation for type <code>a</code>.</p>
 <p>We've already seen that PureScript's records evaluate to JavaScript objects. Just as for functions and arrays, we can reason about the runtime representation of data in a record's fields by considering the types associated with its labels. Of course, the fields of a record are not required to be of the same type.</p>
-<h2 id="representing-adts"><a class="header" href="#representing-adts">Representing ADTs</a></h2>
+<h3 id="representing-adts"><a class="header" href="#representing-adts">Representing ADTs</a></h3>
 <p>For every constructor of an algebraic data type, the PureScript compiler creates a new JavaScript object type by defining a function. Its constructors correspond to functions which create new JavaScript objects based on those prototypes.</p>
 <p>For example, consider the following simple ADT:</p>
 <pre><code class="language-haskell">data ZeroOrOne a = Zero | One a
@@ -4318,7 +4710,7 @@ Two.create = function (value0) {
 <pre><code class="language-haskell">newtype PhoneNumber = PhoneNumber String
 </code></pre>
 <p>is actually represented as a JavaScript string at runtime. This is useful for designing libraries, since newtypes provide an additional layer of type safety, but without the runtime overhead of another function call.</p>
-<h2 id="representing-quantified-types"><a class="header" href="#representing-quantified-types">Representing Quantified Types</a></h2>
+<h3 id="representing-quantified-types"><a class="header" href="#representing-quantified-types">Representing Quantified Types</a></h3>
 <p>Expressions with quantified (polymorphic) types have restrictive representations at runtime. In practice, this means that there are relatively few expressions with a given quantified type, but that we can reason about them quite effectively.</p>
 <p>Consider this polymorphic type, for example:</p>
 <pre><code class="language-haskell">forall a. a -&gt; a
@@ -4341,7 +4733,7 @@ id a = a
 <p>Certainly, this function takes strings to strings, numbers to numbers, etc. but it does not meet the additional condition, since it inspects the (runtime) type of its argument, so this function would not be a valid inhabitant of the type <code>forall a. a -&gt; a</code>.</p>
 <p>Without being able to inspect the runtime type of our function argument, our only option is to return the argument unchanged, and so <code>identity</code> is indeed the only inhabitant of the type <code>forall a. a -&gt; a</code>.</p>
 <p>A full discussion of <em>parametric polymorphism</em> and <em>parametricity</em> is beyond the scope of this book. Note however, that since PureScript's types are <em>erased</em> at runtime, a polymorphic function in PureScript <em>cannot</em> inspect the runtime representation of its arguments (without using the FFI), and so this representation of polymorphic data is appropriate.</p>
-<h2 id="representing-constrained-types"><a class="header" href="#representing-constrained-types">Representing Constrained Types</a></h2>
+<h3 id="representing-constrained-types"><a class="header" href="#representing-constrained-types">Representing Constrained Types</a></h3>
 <p>Functions with a type class constraint have an interesting representation at runtime. Because the behavior of the function might depend on the type class instance chosen by the compiler, the function is given an additional argument, called a <em>type class dictionary</em>, which contains the implementation of the type class functions provided by the chosen instance.</p>
 <p>For example, here is a simple PureScript function with a constrained type which uses the <code>Show</code> type class:</p>
 <pre><code class="language-haskell">shout :: forall a. Show a =&gt; a -&gt; String
@@ -4360,7 +4752,7 @@ shout a = show a &lt;&gt; &quot;!!!&quot;
 
 shout(showNumber)(42);
 </code></pre>
-<h2 id="exercises-32"><a class="header" href="#exercises-32">Exercises</a></h2>
+<h3 id="exercises-32"><a class="header" href="#exercises-32">Exercises</a></h3>
 <ol>
 <li>
 <p>(Easy) What are the runtime representations of these types?</p>
@@ -4374,7 +4766,7 @@ forall a. Ord a =&gt; Array a -&gt; Boolean
 <p>(Medium) Try using the functions defined in the <code>arrays</code> package, calling them from JavaScript, by compiling the library using <code>spago build</code> and importing modules using the <code>import</code> function in NodeJS. <em>Hint</em>: you may need to configure the output path so that the generated ES modules are available on the NodeJS module path.</p>
 </li>
 </ol>
-<h2 id="representing-side-effects"><a class="header" href="#representing-side-effects">Representing Side Effects</a></h2>
+<h3 id="representing-side-effects"><a class="header" href="#representing-side-effects">Representing Side Effects</a></h3>
 <p>The <code>Effect</code> monad is also defined as a foreign type. Its runtime representation is quite simple - an expression of type <code>Effect a</code> should evaluate to a JavaScript function of <strong>no arguments</strong>, which performs any side-effects and returns a value with the correct runtime representation for type <code>a</code>.</p>
 <p>The definition of the <code>Effect</code> type constructor is given in the <code>Effect</code> module as follows:</p>
 <pre><code class="language-haskell">foreign import data Effect :: Type -&gt; Type
@@ -4824,7 +5216,15 @@ modify :: forall m s. MonadState s m =&gt; (s -&gt; s) -&gt; m Unit
 <p>In particular, there are instances of <code>MonadState</code> for the <code>WriterT</code>, <code>ReaderT</code> and <code>ExceptT</code> monad transformers, provided in the <code>transformers</code> package. Each of these monad transformers has an instance for <code>MonadState</code> whenever the underlying <code>Monad</code> does. In practice, this means that as long as <code>StateT</code> appears <em>somewhere</em> in the monad transformer stack, and everything above <code>StateT</code> is an instance of <code>MonadState</code>, then we are free to use <code>get</code>, <code>put</code> and <code>modify</code> directly, without the need to use <code>lift</code>.</p>
 <p>Indeed, the same is true of the actions we covered for the <code>ReaderT</code>, <code>WriterT</code>, and <code>ExceptT</code> transformers. <code>transformers</code> defines a type class for each of the major transformers, allowing us to abstract over monads which support their operations.</p>
 <p>In the case of the <code>split</code> function above, the monad stack we constructed is an instance of each of the <code>MonadState</code>, <code>MonadWriter</code> and <code>MonadError</code> type classes. This means that we don't need to call <code>lift</code> at all! We can just use the actions <code>get</code>, <code>put</code>, <code>tell</code> and <code>throwError</code> as if they were defined on the monad stack itself:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">split :: Parser String
+split = do
+  s &lt;- get
+  tell [&quot;The state is &quot; &lt;&gt; show s]
+  case s of
+    &quot;&quot; -&gt; throwError [&quot;Empty string&quot;]
+    _ -&gt; do
+      put (drop 1 s)
+      pure (take 1 s)
 </code></pre>
 <p>This computation really looks like we have extended our programming language to support the three new side-effects of mutable state, logging and error handling. However, everything is still implemented using pure functions and immutable data under the hood.</p>
 <h2 id="alternatives"><a class="header" href="#alternatives">Alternatives</a></h2>
@@ -4865,12 +5265,20 @@ some :: forall f a. Alternative f =&gt; Lazy (f (Array a)) =&gt; f a -&gt; f (Ar
 <pre><code class="language-haskell">guard :: forall m. Alternative m =&gt; Boolean -&gt; m Unit
 </code></pre>
 <p>The <code>&lt;|&gt;</code> operator allows us to backtrack in case of failure. To see how this is useful, let's define a variant of the <code>split</code> combinator which only matches upper case characters:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">upper :: Parser String
+upper = do
+  s &lt;- split
+  guard $ toUpper s == s
+  pure s
 </code></pre>
 <p>Here, we use a <code>guard</code> to fail if the string is not upper case. Note that this code looks very similar to the array comprehensions we saw earlier - using <code>MonadPlus</code> in this way, we sometimes refer to constructing <em>monad comprehensions</em>.</p>
 <h2 id="backtracking"><a class="header" href="#backtracking">Backtracking</a></h2>
 <p>We can use the <code>&lt;|&gt;</code> operator to backtrack to another alternative in case of failure. To demonstrate this, let's define one more parser, which matches lower case characters:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">lower :: Parser String
+lower = do
+  s &lt;- split
+  guard $ toLower s == s
+  pure s
 </code></pre>
 <p>With this, we can define a parser which eagerly matches many upper case characters if the first character is upper case, or many lower case character if the first character is lower case:</p>
 <pre><code class="language-text">&gt; upperOrLower = some upper &lt;|&gt; some lower
@@ -4926,49 +5334,76 @@ some :: forall f a. Alternative f =&gt; Lazy (f (Array a)) =&gt; f a -&gt; f (Ar
 <p>Notice that the <code>RWS</code> monad is defined in terms of its own monad transformer, by setting the base monad to <code>Identity</code> which provides no side-effects.</p>
 <p>The first type parameter, <code>r</code>, represents the global configuration type. The second, <code>w</code>, represents the monoid which we will use to accumulate a log, and the third, <code>s</code> is the type of our mutable state.</p>
 <p>In the case of our game, our global configuration is defined in a type called <code>GameEnvironment</code> in the <code>Data.GameEnvironment</code> module:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">type PlayerName = String
+
+newtype GameEnvironment = GameEnvironment
+  { playerName    :: PlayerName
+  , debugMode     :: Boolean
+  }
 </code></pre>
 <p>It defines the player name, and a flag which indicates whether or not the game is running in debug mode. These options will be set from the command line when we come to run our monad transformer.</p>
 <p>The mutable state is defined in a type called <code>GameState</code> in the <code>Data.GameState</code> module:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">import Data.Map as M
+import Data.Set as S
 
-
+newtype GameState = GameState
+  { items       :: M.Map Coords (S.Set GameItem)
+  , player      :: Coords
+  , inventory   :: S.Set GameItem
+  }
 </code></pre>
 <p>The <code>Coords</code> data type represents points on a two-dimensional grid, and the <code>GameItem</code> data type is an enumeration of the items in the game:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">data GameItem = Candle | Matches
 </code></pre>
 <p>The <code>GameState</code> type uses two new data structures: <code>Map</code> and <code>Set</code>, which represent sorted maps and sorted sets respectively. The <code>items</code> property is a mapping from coordinates of the game grid to sets of game items at that location. The <code>player</code> property stores the current coordinates of the player, and the <code>inventory</code> property stores a set of game items currently held by the player.</p>
 <p>The <code>Map</code> and <code>Set</code> data structures are sorted by their keys, can be used with any key type in the <code>Ord</code> type class. This means that the keys in our data structures should be totally ordered.</p>
 <p>We will see how the <code>Map</code> and <code>Set</code> structures are used as we write the actions for our game.</p>
 <p>For our log, we will use the <code>List String</code> monoid. We can define a type synonym for our <code>Game</code> monad, implemented using <code>RWS</code>:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">type Log = L.List String
+
+type Game = RWS GameEnvironment Log GameState
 </code></pre>
 <h2 id="implementing-game-logic"><a class="header" href="#implementing-game-logic">Implementing Game Logic</a></h2>
 <p>Our game is going to be built from simple actions defined in the <code>Game</code> monad, by reusing the actions from the <code>Reader</code>, <code>Writer</code> and <code>State</code> monads. At the top level of our application, we will run the pure computations in the <code>Game</code> monad, and use the <code>Effect</code> monad to turn the results into observable side-effects, such as printing text to the console.</p>
 <p>One of the simplest actions in our game is the <code>has</code> action. This action tests whether the player's inventory contains a particular game item. It is defined as follows:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">has :: GameItem -&gt; Game Boolean
+has item = do
+  GameState state &lt;- get
+  pure $ item `S.member` state.inventory
 </code></pre>
 <p>This function uses the <code>get</code> action defined in the <code>MonadState</code> type class to read the current game state, and then uses the <code>member</code> function defined in <code>Data.Set</code> to test whether the specified <code>GameItem</code> appears in the <code>Set</code> of inventory items.</p>
 <p>Another action is the <code>pickUp</code> action. It adds a game item to the player's inventory if it appears in the current room. It uses actions from the <code>MonadWriter</code> and <code>MonadState</code> type classes. First of all, it reads the current game state:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">pickUp :: GameItem -&gt; Game Unit
+pickUp item = do
+  GameState state &lt;- get
 </code></pre>
 <p>Next, <code>pickUp</code> looks up the set of items in the current room. It does this by using the <code>lookup</code> function defined in <code>Data.Map</code>:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  case state.player `M.lookup` state.items of
 </code></pre>
 <p>The <code>lookup</code> function returns an optional result indicated by the <code>Maybe</code> type constructor. If the key does not appear in the map, the <code>lookup</code> function returns <code>Nothing</code>, otherwise it returns the corresponding value in the <code>Just</code> constructor.</p>
 <p>We are interested in the case where the corresponding item set contains the specified game item. Again we can test this using the <code>member</code> function:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">    Just items | item `S.member` items -&gt; do
 </code></pre>
 <p>In this case, we can use <code>put</code> to update the game state, and <code>tell</code> to add a message to the log:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">          let newItems = M.update (Just &lt;&lt;&lt; S.delete item) state.player state.items
+              newInventory = S.insert item state.inventory
+          put $ GameState state { items     = newItems
+                                , inventory = newInventory
+                                }
+          tell (L.singleton (&quot;You now have the &quot; &lt;&gt; show item))
 </code></pre>
 <p>Note that there is no need to <code>lift</code> either of the two computations here, because there are appropriate instances for both <code>MonadState</code> and <code>MonadWriter</code> for our <code>Game</code> monad transformer stack.</p>
 <p>The argument to <code>put</code> uses a record update to modify the game state's <code>items</code> and <code>inventory</code> fields. We use the <code>update</code> function from <code>Data.Map</code> which modifies a value at a particular key. In this case, we modify the set of items at the player's current location, using the <code>delete</code> function to remove the specified item from the set. <code>inventory</code> is also updated, using <code>insert</code> to add the new item to the player's inventory set.</p>
 <p>Finally, the <code>pickUp</code> function handles the remaining cases, by notifying the user using <code>tell</code>:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">    _ -&gt; tell (L.singleton &quot;I don't see that item here.&quot;)
 </code></pre>
 <p>As an example of using the <code>Reader</code> monad, we can look at the code for the <code>debug</code> command. This command allows the user to inspect the game state at runtime if the game is running in debug mode:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  GameEnvironment env &lt;- ask
+  if env.debugMode
+    then do
+      state :: GameState &lt;- get
+      tell (L.singleton (show state))
+    else tell (L.singleton &quot;Not running in debug mode.&quot;)
 </code></pre>
 <p>Here, we use the <code>ask</code> action to read the game configuration. Again, note that we don't need to <code>lift</code> any computation, and we can use actions defined in the <code>MonadState</code>, <code>MonadReader</code> and <code>MonadWriter</code> type classes in the same do notation block.</p>
 <p>If the <code>debugMode</code> flag is set, then the <code>tell</code> action is used to write the state to the log. Otherwise, an error message is added.</p>
@@ -4977,7 +5412,7 @@ some :: forall f a. Alternative f =&gt; Lazy (f (Array a)) =&gt; f a -&gt; f (Ar
 <p>Since our game logic runs in the <code>RWS</code> monad, it is necessary to run the computation in order to respond to the user's commands.</p>
 <p>The front-end of our game is built using two packages: <code>optparse</code>, which provides applicative command line parsing, and <code>node-readline</code>, which wraps NodeJS' <code>readline</code> module, allowing us to write interactive console-based applications.</p>
 <p>The interface to our game logic is provided by the function <code>game</code> in the <code>Game</code> module:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">game :: Array String -&gt; Game Unit
 </code></pre>
 <p>To run this computation, we pass a list of words entered by the user as an array of strings, and run the resulting <code>RWS</code> computation using <code>runRWS</code>:</p>
 <pre><code class="language-haskell">data RWSResult state result writer = RWSResult state result writer
@@ -4986,7 +5421,7 @@ runRWS :: forall r w s a. RWS r w s a -&gt; r -&gt; s -&gt; RWSResult s a w
 </code></pre>
 <p><code>runRWS</code> looks like a combination of <code>runReader</code>, <code>runWriter</code> and <code>runState</code>. It takes a global configuration and an initial state as an argument, and returns a data structure containing the log, the result and the final state.</p>
 <p>The front-end of our application is defined by a function <code>runGame</code>, with the following type signature:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">runGame :: GameEnvironment -&gt; Effect Unit
 </code></pre>
 <p>This function interacts with the user via the console (using the <code>node-readline</code> and <code>console</code> packages). <code>runGame</code> takes the game configuration as a function argument.</p>
 <p>The <code>node-readline</code> package provides the <code>LineHandler</code> type, which represents actions in the <code>Effect</code> monad which handle user input from the terminal. Here is the corresponding API:</p>
@@ -4999,22 +5434,31 @@ foreign import setLineHandler
   -&gt; Effect Unit
 </code></pre>
 <p>The <code>Interface</code> type represents a handle for the console, and is passed as an argument to the functions which interact with it. An <code>Interface</code> can be created using the <code>createConsoleInterface</code> function:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">import Node.ReadLine as RL
 
-
+runGame env = do
+  interface &lt;- RL.createConsoleInterface RL.noCompletion
 </code></pre>
 <p>The first step is to set the prompt at the console. We pass the <code>interface</code> handle, and provide the prompt string and indentation level:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  RL.setPrompt &quot;&gt; &quot; interface
 </code></pre>
 <p>In our case, we are interested in implementing the line handler function. Our line handler is defined using a helper function in a <code>let</code> declaration, as follows:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">    lineHandler :: GameState -&gt; String -&gt; Effect Unit
+    lineHandler currentState input = do
+      case runRWS (game (split (wrap &quot; &quot;) input)) env currentState of
+        RWSResult state _ written -&gt; do
+          for_ written log
+          RL.setLineHandler (lineHandler state) $ interface
+      RL.prompt interface
+      pure unit
 </code></pre>
 <p>The <code>let</code> binding is closed over both the game configuration, named <code>env</code>, and the console handle, named <code>interface</code>.</p>
 <p>Our handler takes an additional first argument, the game state. This is required since we need to pass the game state to <code>runRWS</code> to run the game's logic.</p>
 <p>The first thing this action does is to break the user input into words using the <code>split</code> function from the <code>Data.String</code> module. It then uses <code>runRWS</code> to run the <code>game</code> action (in the <code>RWS</code> monad), passing the game environment and current game state.</p>
 <p>Having run the game logic, which is a pure computation, we need to print any log messages to the screen and show the user a prompt for the next command. The <code>for_</code> action is used to traverse the log (of type <code>List String</code>) and print its entries to the console. Finally, <code>setLineHandler</code> is used to update the line handler function to use the updated game state, and the prompt is displayed again using the <code>prompt</code> action.</p>
 <p>The <code>runGame</code> function finally attaches the initial line handler to the console interface, and displays the initial prompt:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  RL.setLineHandler (lineHandler initialGameState) interface
+  RL.prompt interface
 </code></pre>
 <h2 id="exercises-38"><a class="header" href="#exercises-38">Exercises</a></h2>
 <ol>
@@ -5032,17 +5476,38 @@ foreign import setLineHandler
 <pre><code class="language-haskell">customExecParser :: forall a. ParserPrefs → ParserInfo a → Effect a
 </code></pre>
 <p>This is best illustrated by example. The application's <code>main</code> function is defined using <code>customExecParser</code> as follows:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">main = OP.customExecParser prefs argParser &gt;&gt;= runGame 
 </code></pre>
 <p>The first argument is used to configure the <code>optparse</code> library. In our case, we simply configure it to show the help message when the application is run without any arguments (instead of showing a &quot;missing argument&quot; error) by using <code>OP.prefs OP.showHelpOnEmpty</code>, but the <code>Options.Applicative.Builder</code> module provides several other options.</p>
 <p>The second argument is the complete description of our parser program:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  argParser :: OP.ParserInfo GameEnvironment
+  argParser = OP.info (env &lt;**&gt; OP.helper) parserOptions
 
-
+  parserOptions = fold 
+    [ OP.fullDesc
+    , OP.progDesc &quot;Play the game as &lt;player name&gt;&quot;
+    , OP.header &quot;Monadic Adventures! A game to learn monad transformers&quot; 
+    ]
 </code></pre>
-<p>Here <code>OP.info</code> combines a <code>Parser</code> with a set of options for how the help message is formatted. <code>env &lt;**&gt; OP.helper</code> takes any command line argument <code>Parser</code> named <code>env</code> and adds a <code>--help</code> option to it automatically. Options for the help message are of type <code>InfoMod</code>, which is a monoid, so we can use the <code>fold</code> function to add several options together. </p>
+<p>Here <code>OP.info</code> combines a <code>Parser</code> with a set of options for how the help message is formatted. <code>env &lt;**&gt; OP.helper</code> takes any command line argument <code>Parser</code> named <code>env</code> and adds a <code>--help</code> option to it automatically. Options for the help message are of type <code>InfoMod</code>, which is a monoid, so we can use the <code>fold</code> function to add several options together.</p>
 <p>The interesting part of our parser is constructing the <code>GameEnvironment</code>:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  env :: OP.Parser GameEnvironment
+  env = gameEnvironment &lt;$&gt; player &lt;*&gt; debug
+
+  player :: OP.Parser String
+  player = OP.strOption $ fold 
+    [ OP.long &quot;player&quot;
+    , OP.short 'p'
+    , OP.metavar &quot;&lt;player name&gt;&quot;
+    , OP.help &quot;The player's name &lt;String&gt;&quot;
+    ]
+
+  debug :: OP.Parser Boolean
+  debug = OP.switch $ fold 
+    [ OP.long &quot;debug&quot;
+    , OP.short 'd'
+    , OP.help &quot;Use debug mode&quot;
+    ]
 </code></pre>
 <p><code>player</code> and <code>debug</code> are both <code>Parser</code>s, so we can use our applicative operators <code>&lt;$&gt;</code> and <code>&lt;*&gt;</code> to lift our <code>gameEnvironment</code> function, which has the type <code>PlayerName -&gt; Boolean -&gt; GameEnvironment</code> over <code>Parser</code>. <code>OP.strOption</code> constructs a command line option that expects a string value, and is configured via a collection of <code>Mod</code>s folded together. <code>OP.flag</code> works similarly, but doesn't expect an associated value. <code>optparse</code> offers extensive <a href="https://pursuit.purescript.org/packages/purescript-optparse">documentation</a> on different modifiers available to build various command line parsers.</p>
 <p>Notice how we were able to use the notation afforded by the applicative operators to give a compact, declarative specification of our command line interface. In addition, it is simple to add new command line arguments, simply by adding a new function argument to <code>runGame</code>, and then using <code>&lt;*&gt;</code> to lift <code>runGame</code> over an additional argument in the definition of <code>env</code>.</p>
@@ -5070,7 +5535,10 @@ foreign import setLineHandler
 <p>The <code>Example/Rectangle.purs</code> file contains a simple introductory example, which draws a single blue rectangle at the center of the canvas. The module imports the <code>Effect</code> type from the <code>Effect</code> module, and also the <code>Graphics.Canvas</code> module, which contains actions in the <code>Effect</code> monad for working with the Canvas API.</p>
 <p>The <code>main</code> action starts, like in the other modules, by using the <code>getCanvasElementById</code> action to get a reference to the canvas object, and the <code>getContext2D</code> action to access the 2D rendering context for the canvas:</p>
 <p>The <code>void</code> function takes a functor and replaces its value with <code>Unit</code>. In the example it is used to make <code>main</code> conform with its signature.</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">main :: Effect Unit
+main = void $ unsafePartial do
+  Just canvas &lt;- getCanvasElementById &quot;canvas&quot;
+  ctx &lt;- getContext2D canvas
 </code></pre>
 <p><em>Note</em>: the call to <code>unsafePartial</code> here is necessary since the pattern match on the result of <code>getCanvasElementById</code> is partial, matching only the <code>Just</code> constructor. For our purposes, this is fine, but in production code, we would probably want to match the <code>Nothing</code> constructor and provide an appropriate error message.</p>
 <p>The types of these actions can be found using PSCi or by looking at the documentation:</p>
@@ -5081,14 +5549,19 @@ getContext2D :: CanvasElement -&gt; Effect Context2D
 <p><code>CanvasElement</code> and <code>Context2D</code> are types defined in the <code>Graphics.Canvas</code> module. The same module also defines the <code>Canvas</code> effect, which is used by all of the actions in the module.</p>
 <p>The graphics context <code>ctx</code> manages the state of the canvas, and provides methods to render primitive shapes, set styles and colors, and apply transformations.</p>
 <p>We continue by setting the fill style to solid blue using the <code>setFillStyle</code> action. The longer hex notation of <code>#0000FF</code> may also be used for blue, but shorthand notation is easier for simple colors:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  setFillStyle ctx &quot;#00F&quot;
 </code></pre>
 <p>Note that the <code>setFillStyle</code> action takes the graphics context as an argument. This is a common pattern in the <code>Graphics.Canvas</code> module.</p>
 <p>Finally, we use the <code>fillPath</code> action to fill the rectangle. <code>fillPath</code> has the following type:</p>
 <pre><code class="language-haskell">fillPath :: forall a. Context2D -&gt; Effect a -&gt; Effect a
 </code></pre>
 <p><code>fillPath</code> takes a graphics context and another action which builds the path to render. To build a path, we can use the <code>rect</code> action. <code>rect</code> takes a graphics context, and a record which provides the position and size of the rectangle:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  fillPath ctx $ rect ctx
+    { x: 250.0
+    , y: 250.0
+    , width: 100.0
+    , height: 100.0
+    }
 </code></pre>
 <p>Build the rectangle example, providing <code>Example.Rectangle</code> as the name of the main module:</p>
 <pre><code class="language-text">$ spago bundle-app --main Example.Rectangle --to dist/Main.js
@@ -5127,13 +5600,28 @@ getContext2D :: CanvasElement -&gt; Effect Context2D
 </code></pre>
 <p>Notice that both the <code>Rectangle</code> and <code>Arc</code> record types contain <code>x</code> and <code>y</code> properties of type <code>Number</code>. In both cases, this pair represents a point. This means that we can write row-polymorphic functions which can act on either type of record.</p>
 <p>For example, the <code>Shapes</code> module defines a <code>translate</code> function which translates a shape by modifying its <code>x</code> and <code>y</code> properties:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">translate
+  :: forall r
+   . Number
+  -&gt; Number
+  -&gt; { x :: Number, y :: Number | r }
+  -&gt; { x :: Number, y :: Number | r }
+translate dx dy shape = shape
+  { x = shape.x + dx
+  , y = shape.y + dy
+  }
 </code></pre>
 <p>Notice the row-polymorphic type. It says that <code>translate</code> accepts any record with <code>x</code> and <code>y</code> properties <em>and any other properties</em>, and returns the same type of record. The <code>x</code> and <code>y</code> fields are updated, but the rest of the fields remain unchanged.</p>
 <p>This is an example of <em>record update syntax</em>. The expression <code>shape { ... }</code> creates a new record based on the <code>shape</code> record, with the fields inside the braces updated to the specified values. Note that the expressions inside the braces are separated from their labels by equals symbols, not colons like in record literals.</p>
 <p>The <code>translate</code> function can be used with both the <code>Rectangle</code> and <code>Arc</code> records, as can be seen in the <code>Shapes</code> example.</p>
 <p>The third type of path rendered in the <code>Shapes</code> example is a piecewise-linear path. Here is the corresponding code:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  setFillStyle ctx &quot;#F00&quot;
+
+  fillPath ctx $ do
+    moveTo ctx 300.0 260.0
+    lineTo ctx 260.0 340.0
+    lineTo ctx 340.0 340.0
+    closePath ctx
 </code></pre>
 <p>There are three functions in use here:</p>
 <ul>
@@ -5174,16 +5662,29 @@ getContext2D :: CanvasElement -&gt; Effect Context2D
 <h2 id="drawing-random-circles"><a class="header" href="#drawing-random-circles">Drawing Random Circles</a></h2>
 <p>The <code>Example/Random.purs</code> file contains an example which uses the <code>Effect</code> monad to interleave two different types of side-effect: random number generation, and canvas manipulation. The example renders one hundred randomly generated circles onto the canvas.</p>
 <p>The <code>main</code> action obtains a reference to the graphics context as before, and then sets the stroke and fill styles:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  setFillStyle ctx &quot;#F00&quot;
+  setStrokeStyle ctx &quot;#000&quot;
 </code></pre>
 <p>Next, the code uses the <code>for_</code> function to loop over the integers between <code>0</code> and <code>100</code>:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  for_ (1 .. 100) \_ -&gt; do
 </code></pre>
 <p>On each iteration, the do notation block starts by generating three random numbers distributed between <code>0</code> and <code>1</code>. These numbers represent the <code>x</code> and <code>y</code> coordinates, and the radius of a circle:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">    x &lt;- random
+    y &lt;- random
+    r &lt;- random
 </code></pre>
 <p>Next, for each circle, the code creates an <code>Arc</code> based on these parameters and finally fills and strokes the arc with the current styles:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">    let path = arc ctx
+         { x                  : x * 600.0
+         , y                  : y * 600.0
+         , radius             : r * 50.0
+         , start              : 0.0
+         , end                : Number.tau
+         , useCounterClockwise: false
+         }
+
+    fillPath ctx path
+    strokePath ctx path
 </code></pre>
 <p>Build this example by specifying the <code>Example.Random</code> module as the main module:</p>
 <pre><code class="language-text">$ spago bundle-app --main Example.Random --to dist/Main.js
@@ -5264,13 +5765,27 @@ Type -&gt; Type
 <p>A value of type <code>Ref a</code> is a mutable reference cell containing a value of type <code>a</code>, used to track global mutation. As such, it should be used sparingly.</p>
 <p>The <code>Example/Refs.purs</code> file contains an example which uses a <code>Ref</code> to track mouse clicks on the <code>canvas</code> element.</p>
 <p>The code starts by creating a new reference containing the value <code>0</code>, by using the <code>new</code> action:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  clickCount &lt;- Ref.new 0
 </code></pre>
 <p>Inside the click event handler, the <code>modify</code> action is used to update the click count, and the updated value is returned.</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">    count &lt;- Ref.modify (\count -&gt; count + 1) clickCount
 </code></pre>
 <p>In the <code>render</code> function, the click count is used to determine the transformation applied to a rectangle:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  withContext ctx do
+    let scaleX = Number.sin (toNumber count * Number.tau / 8.0) + 1.5
+    let scaleY = Number.sin (toNumber count * Number.tau / 12.0) + 1.5
+
+    translate ctx { translateX: 300.0, translateY:  300.0 }
+    rotate ctx (toNumber count * Number.tau / 36.0)
+    scale ctx { scaleX: scaleX, scaleY: scaleY }
+    translate ctx { translateX: -100.0, translateY: -100.0 }
+
+    fillPath ctx $ rect ctx
+      { x: 0.0
+      , y: 0.0
+      , width: 200.0
+      , height: 200.0
+      }
 </code></pre>
 <p>This action uses <code>withContext</code> to preserve the original transformation, and then applies the following sequence of transformations (remember that transformations are applied bottom-to-top):</p>
 <ul>
@@ -5306,16 +5821,20 @@ FLFRRFLFLFLFRRFLFRRFLFRRFLFLFLFRRFLFRRFLFRRFLF...
 <p>and so on. Plotting a piecewise-linear path corresponding to this set of instruction approximates a curve called the <em>Koch curve</em>. Increasing the number of iterations increases the resolution of the curve.</p>
 <p>Let's translate this into the language of types and functions.</p>
 <p>We can represent our alphabet of letters with the following ADT:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">data Letter = L | R | F
 </code></pre>
 <p>This data type defines one data constructor for each letter in our alphabet.</p>
 <p>How can we represent the initial sequence of letters? Well, that's just an array of letters from our alphabet, which we will call a <code>Sentence</code>:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">type Sentence = Array Letter
 
-
+initial :: Sentence
+initial = [F, R, R, F, R, R, F, R, R]
 </code></pre>
 <p>Our production rules can be represented as a function from <code>Letter</code> to <code>Sentence</code> as follows:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">productions :: Letter -&gt; Sentence
+productions L = [L]
+productions R = [R]
+productions F = [F, L, F, R, R, F, L, F]
 </code></pre>
 <p>This is just copied straight from the specification above.</p>
 <p>Now we can implement a function <code>lsystem</code> which will take a specification in this form, and render it to the canvas. What type should <code>lsystem</code> have? Well, it needs to take values like <code>initial</code> and <code>productions</code> as arguments, as well as a function which can render a letter of the alphabet to the canvas.</p>
@@ -5348,11 +5867,16 @@ FLFRRFLFLFLFRRFLFRRFLFRRFLFLFLFRRFLFRRFLFRRFLF...
 <p>Firstly, the type <code>s</code> was added as the type of an additional argument to <code>lsystem</code>. This argument will represent the initial state of the L-system.</p>
 <p>The type <code>s</code> also appears as an argument to, and as the return type of the interpretation function (the third argument to <code>lsystem</code>). The interpretation function will now receive the current state of the L-system as an argument, and will return a new, updated state as its return value.</p>
 <p>In the case of our example, we can define use following type to represent the state:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">type State =
+  { x :: Number
+  , y :: Number
+  , theta :: Number
+  }
 </code></pre>
 <p>The properties <code>x</code> and <code>y</code> represent the current position of the path, and the <code>theta</code> property represents the current direction of the path, specified as the angle between the path direction and the horizontal axis, in radians.</p>
 <p>The initial state of the system might be specified as follows:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">initialState :: State
+initialState = { x: 120.0, y: 200.0, theta: 0.0 }
 </code></pre>
 <p>Now let's try to implement the <code>lsystem</code> function. We will find that its definition is remarkably simple.</p>
 <p>It seems reasonable that <code>lsystem</code> should recurse on its fourth argument (of type <code>Int</code>). On each step of the recursion, the current sentence will change, having been updated by using the production rules. With that in mind, let's begin by introducing names for the function arguments, and delegating to a helper function:</p>
@@ -5363,34 +5887,48 @@ FLFRRFLFLFLFRRFLFRRFLFRRFLFLFLFRRFLFRRFLFRRFLF...
         -&gt; Int
         -&gt; s
         -&gt; Effect s
-
+lsystem init prod interpret n state = go init n
+  where
 </code></pre>
 <p>The <code>go</code> function works by recursion on its second argument. There are two cases: when <code>n</code> is zero, and when <code>n</code> is non-zero.</p>
 <p>In the first case, the recursion is complete, and we simply need to interpret the current sentence according to the interpretation function. We have a sentence of type <code>Array a</code>, a state of type <code>s</code>, and a function of type <code>s -&gt; a -&gt; Effect s</code>. This sounds like a job for the <code>foldM</code> function which we defined earlier, and which is available from the <code>control</code> package:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  go s 0 = foldM interpret state s
 </code></pre>
 <p>What about in the non-zero case? In that case, we can simply apply the production rules to each letter of the current sentence, concatenate the results, and repeat by calling <code>go</code> recursively:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  go s i = go (concatMap prod s) (i - 1)
 </code></pre>
 <p>That's it! Note how the use of higher order functions like <code>foldM</code> and <code>concatMap</code> allowed us to communicate our ideas concisely.</p>
 <p>However, we're not quite done. The type we have given is actually still too specific. Note that we don't use any canvas operations anywhere in our implementation. Nor do we make use of the structure of the <code>Effect</code> monad at all. In fact, our function works for <em>any</em> monad <code>m</code>!</p>
 <p>Here is the more general type of <code>lsystem</code>, as specified in the accompanying source code for this chapter:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">lsystem :: forall a m s
+         . Monad m
+         =&gt; Array a
+         -&gt; (a -&gt; Array a)
+         -&gt; (s -&gt; a -&gt; m s)
+         -&gt; Int
+         -&gt; s
+         -&gt; m s
 </code></pre>
 <p>We can understand this type as saying that our interpretation function is free to have any side-effects at all, captured by the monad <code>m</code>. It might render to the canvas, or print information to the console, or support failure or multiple return values. The reader is encouraged to try writing L-systems which use these various types of side-effect.</p>
 <p>This function is a good example of the power of separating data from implementation. The advantage of this approach is that we gain the freedom to interpret our data in multiple different ways. We might even factor <code>lsystem</code> into two smaller functions: the first would build the sentence using repeated application of <code>concatMap</code>, and the second would interpret the sentence using <code>foldM</code>. This is also left as an exercise for the reader.</p>
 <p>Let's complete our example by implementing its interpretation function. The type of <code>lsystem</code> tells us that its type signature must be <code>s -&gt; a -&gt; m s</code> for some types <code>a</code> and <code>s</code> and a type constructor <code>m</code>. We know that we want <code>a</code> to be <code>Letter</code> and <code>s</code> to be <code>State</code>, and for the monad <code>m</code> we can choose <code>Effect</code>. This gives us the following type:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">    interpret :: State -&gt; Letter -&gt; Effect State
 </code></pre>
 <p>To implement this function, we need to handle the three data constructors of the <code>Letter</code> type. To interpret the letters <code>L</code> (move left) and <code>R</code> (move right), we simply have to update the state to change the angle <code>theta</code> appropriately:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">    interpret state L = pure $ state { theta = state.theta - Number.tau / 6.0 }
+    interpret state R = pure $ state { theta = state.theta + Number.tau / 6.0 }
 </code></pre>
 <p>To interpret the letter <code>F</code> (move forward), we can calculate the new position of the path, render a line segment, and update the state, as follows:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">    interpret state F = do
+      let x = state.x + Number.cos state.theta * 1.5
+          y = state.y + Number.sin state.theta * 1.5
+      moveTo ctx state.x state.y
+      lineTo ctx x y
+      pure { x, y, theta: state.theta }
 </code></pre>
 <p>Note that in the source code for this chapter, the <code>interpret</code> function is defined using a <code>let</code> binding inside the <code>main</code> function, so that the name <code>ctx</code> is in scope. It would also be possible to move the context into the <code>State</code> type, but this would be inappropriate because it is not a changing part of the state of the system.</p>
 <p>To render this L-system, we can simply use the <code>strokePath</code> action:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  strokePath ctx $ lsystem initial productions interpret 5 initialState
 </code></pre>
 <p>Compile the L-system example using</p>
 <pre><code class="language-text">$ spago bundle-app --main Example.LSystem --to dist/Main.js
@@ -6286,31 +6824,43 @@ constructor for your <code>newtype</code>.</p>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+
+
                         <div style="clear: both"></div>
                     </nav>
                 </div>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
             </nav>
 
         </div>
 
-        <script type="text/javascript">
+
+
+
+        <script>
             window.playground_copyable = true;
         </script>
-        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
-        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
-        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
 
         <!-- Custom JS scripts -->
-        <script type="text/javascript">
+
+        <script>
         window.addEventListener('load', function() {
             window.setTimeout(window.print, 100);
         });
         </script>
+
+    </div>
     </body>
 </html>

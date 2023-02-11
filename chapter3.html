@@ -4,8 +4,10 @@
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Functions and Records - PureScript by Example</title>
+
+
         <!-- Custom HTML head -->
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
@@ -16,25 +18,29 @@
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
         <link rel="stylesheet" href="css/print.css" media="print">
+
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
         <link rel="stylesheet" href="fonts/fonts.css">
+
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
-        <script type="text/javascript">
+        <script>
             var path_to_root = "";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
-        <script type="text/javascript">
+        <script>
             try {
                 var theme = localStorage.getItem('mdbook-theme');
                 var sidebar = localStorage.getItem('mdbook-sidebar');
@@ -50,7 +56,7 @@
         </script>
 
         <!-- Set the theme before any content is loaded, prevents flash -->
-        <script type="text/javascript">
+        <script>
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
@@ -62,7 +68,7 @@
         </script>
 
         <!-- Hide / unhide sidebar before it is displayed -->
-        <script type="text/javascript">
+        <script>
             var html = document.querySelector('html');
             var sidebar = 'hidden';
             if (document.body.clientWidth >= 1080) {
@@ -83,7 +89,7 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                <div id="menu-bar-hover-placeholder"></div>
+                                <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky bordered">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
@@ -93,7 +99,7 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
@@ -113,6 +119,7 @@
                         <a href="https://github.com/purescript-contrib/purescript-book" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
+
                     </div>
                 </div>
 
@@ -126,8 +133,9 @@
                         </ul>
                     </div>
                 </div>
+
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
-                <script type="text/javascript">
+                <script>
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
                     document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
                     Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
@@ -144,7 +152,13 @@
 <p>The front-end of our application will be the interactive mode PSCi, but it would be possible to build on this code to write a front-end in JavaScript. In fact, we will do exactly that in later chapters, adding form validation and save/restore functionality.</p>
 <h2 id="project-setup"><a class="header" href="#project-setup">Project Setup</a></h2>
 <p>The source code for this chapter is contained in the file <code>src/Data/AddressBook.purs</code>. This file starts with a module declaration and its import list:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">module Data.AddressBook where
+
+import Prelude
+
+import Control.Plus (empty)
+import Data.List (List(..), filter, head)
+import Data.Maybe (Maybe)
 </code></pre>
 <p>Here, we import several modules:</p>
 <ul>
@@ -281,14 +295,22 @@ y + z
 <p>The only exception to this rule is the <code>where</code> keyword in the initial <code>module</code> declaration at the top of a source file.</p>
 <h2 id="defining-our-types"><a class="header" href="#defining-our-types">Defining Our Types</a></h2>
 <p>A good first step when tackling a new problem in PureScript is to write out type definitions for any values you will be working with. First, let's define a type for records in our address book:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">type Entry =
+  { firstName :: String
+  , lastName  :: String
+  , address   :: Address
+  }
 </code></pre>
 <p>This defines a <em>type synonym</em> called <code>Entry</code> - the type <code>Entry</code> is equivalent to the type on the right of the equals symbol: a record type with three fields - <code>firstName</code>, <code>lastName</code> and <code>address</code>. The two name fields will have type <code>String</code>, and the <code>address</code> field will have type <code>Address</code>, defined as follows:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">type Address =
+  { street :: String
+  , city   :: String
+  , state  :: String
+  }
 </code></pre>
 <p>Note that records can contain other records.</p>
 <p>Now let's define a third type synonym, for our address book data structure, which will be represented simply as a linked list of entries:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">type AddressBook = List Entry
 </code></pre>
 <p>Note that <code>List Entry</code> is not the same as <code>Array Entry</code>, which represents an <em>array</em> of entries.</p>
 <h2 id="type-constructors-and-kinds"><a class="header" href="#type-constructors-and-kinds">Type Constructors and Kinds</a></h2>
@@ -316,13 +338,18 @@ Type
 <p>PureScript's <em>kind system</em> supports other interesting kinds, which we will see later in the book.</p>
 <h2 id="displaying-address-book-entries"><a class="header" href="#displaying-address-book-entries">Displaying Address Book Entries</a></h2>
 <p>Let's write our first function, which will render an address book entry as a string. We start by giving the function a type. This is optional, but good practice, since it acts as a form of documentation. In fact, the PureScript compiler will give a warning if a top-level declaration does not contain a type annotation. A type declaration separates the name of a function from its type with the <code>::</code> symbol:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">showEntry :: Entry -&gt; String
 </code></pre>
 <p>This type signature says that <code>showEntry</code> is a function, which takes an <code>Entry</code> as an argument and returns a <code>String</code>. Here is the code for <code>showEntry</code>:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">showEntry entry = entry.lastName &lt;&gt; &quot;, &quot; &lt;&gt;
+                  entry.firstName &lt;&gt; &quot;: &quot; &lt;&gt;
+                  showAddress entry.address
 </code></pre>
 <p>This function concatenates the three fields of the <code>Entry</code> record into a single string, using the <code>showAddress</code> function to turn the record inside the <code>address</code> field into a <code>String</code>. <code>showAddress</code> is defined similarly:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">showAddress :: Address -&gt; String
+showAddress addr = addr.street &lt;&gt; &quot;, &quot; &lt;&gt;
+                   addr.city &lt;&gt; &quot;, &quot; &lt;&gt;
+                   addr.state
 </code></pre>
 <p>A function definition begins with the name of the function, followed by a list of argument names. The result of the function is specified after the equals sign. Fields are accessed with a dot, followed by the field name. In PureScript, string concatenation uses the diamond operator (<code>&lt;&gt;</code>), instead of the plus operator like in JavaScript.</p>
 <h2 id="test-early-test-often"><a class="header" href="#test-early-test-often">Test Early, Test Often</a></h2>
@@ -351,10 +378,11 @@ Type
 </code></pre>
 <h2 id="creating-address-books"><a class="header" href="#creating-address-books">Creating Address Books</a></h2>
 <p>Now let's write some utility functions for working with address books. We will need a value which represents an empty address book: an empty list.</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">emptyBook :: AddressBook
+emptyBook = empty
 </code></pre>
 <p>We will also need a function for inserting a value into an existing address book. We will call this function <code>insertEntry</code>. Start by giving its type:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">insertEntry :: Entry -&gt; AddressBook -&gt; AddressBook
 </code></pre>
 <p>This type signature says that <code>insertEntry</code> takes an <code>Entry</code> as its first argument, and an <code>AddressBook</code> as a second argument, and returns a new <code>AddressBook</code>.</p>
 <p>We don't modify the existing <code>AddressBook</code> directly. Instead, we return a new <code>AddressBook</code> which contains the same data. As such, <code>AddressBook</code> is an example of an <em>immutable data structure</em>. This is an important idea in PureScript - mutation is a side-effect of code, and inhibits our ability to reason effectively about its behavior, so we prefer pure functions and immutable data where possible.</p>
@@ -408,7 +436,8 @@ insertEntry entry book = Cons entry book
 insertEntry entry = Cons entry
 </code></pre>
 <p>But now, by the same argument, we can remove <code>entry</code> from both sides:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">insertEntry :: Entry -&gt; AddressBook -&gt; AddressBook
+insertEntry = Cons
 </code></pre>
 <p>This process is called <em>eta conversion</em>, and can be used (along with some other techniques) to rewrite functions in <em>point-free form</em>, which means functions defined without reference to their arguments.</p>
 <p>In the case of <code>insertEntry</code>, <em>eta conversion</em> has resulted in a very clear definition of our function - &quot;<code>insertEntry</code> is just cons on lists&quot;. However, it is arguable whether point-free form is better in general.</p>
@@ -457,7 +486,7 @@ head :: AddressBook -&gt; Maybe Entry
 <p>We know that we will need to pass the first and last names that we want to search for, as arguments to our function.</p>
 <p>We also know that we will need a function to pass to <code>filter</code>. Let's call this function <code>filterEntry</code>. <code>filterEntry</code> will have type <code>Entry -&gt; Boolean</code>. The application <code>filter filterEntry</code> will then have type <code>AddressBook -&gt; AddressBook</code>. If we pass the result of this function to the <code>head</code> function, we get our result of type <code>Maybe Entry</code>.</p>
 <p>Putting these facts together, a reasonable type signature for our function, which we will call <code>findEntry</code>, is:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">findEntry :: String -&gt; String -&gt; AddressBook -&gt; Maybe Entry
 </code></pre>
 <p>This type signature says that <code>findEntry</code> takes two strings, the first and last names, and a <code>AddressBook</code>, and returns an optional <code>Entry</code>. The optional result will contain a value only if the name is found in the address book.</p>
 <p>And here is the definition of <code>findEntry</code>:</p>
@@ -547,10 +576,11 @@ add5 x = 5 `(+)` x  -- Yo Dawg, I herd you like infix, so we put infix in your i
 <p>Note that the <code>book</code> argument is passed to the <code>filter filterEntry</code> function, and the result of this application is passed to <code>head</code>. In other words, <code>book</code> is passed to the <em>composition</em> of the functions <code>filter filterEntry</code> and <code>head</code>.</p>
 <p>In PureScript, the function composition operators are <code>&lt;&lt;&lt;</code> and <code>&gt;&gt;&gt;</code>. The first is &quot;backwards composition&quot;, and the second is &quot;forwards composition&quot;.</p>
 <p>We can rewrite the right-hand side of <code>findEntry</code> using either operator. Using backwards-composition, the right-hand side would be</p>
-<pre><code>(head &lt;&lt;&lt; filter filterEntry) book
+<pre><code class="language-haskell">(head &lt;&lt;&lt; filter filterEntry) book
 </code></pre>
 <p>In this form, we can apply the eta conversion trick from earlier, to arrive at the final form of <code>findEntry</code>:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">findEntry firstName lastName = head &lt;&lt;&lt; filter filterEntry
+  where
     ...
 </code></pre>
 <p>An equally valid right-hand side would be:</p>
@@ -586,9 +616,11 @@ add5 x = 5 `(+)` x  -- Yo Dawg, I herd you like infix, so we put infix in your i
                             <a rel="prev" href="chapter2.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
+
                             <a rel="next" href="chapter4.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
+
                         <div style="clear: both"></div>
                     </nav>
                 </div>
@@ -598,6 +630,7 @@ add5 x = 5 `(+)` x  -- Yo Dawg, I herd you like infix, so we put infix in your i
                     <a rel="prev" href="chapter2.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
+
                     <a rel="next" href="chapter4.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
@@ -605,16 +638,25 @@ add5 x = 5 `(+)` x  -- Yo Dawg, I herd you like infix, so we put infix in your i
 
         </div>
 
-        <script type="text/javascript">
+
+
+
+        <script>
             window.playground_copyable = true;
         </script>
-        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
-        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
-        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
 
         <!-- Custom JS scripts -->
+
+
+    </div>
     </body>
 </html>

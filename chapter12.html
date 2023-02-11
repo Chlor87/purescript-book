@@ -4,8 +4,10 @@
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Canvas Graphics - PureScript by Example</title>
+
+
         <!-- Custom HTML head -->
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
@@ -16,25 +18,29 @@
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
         <link rel="stylesheet" href="css/print.css" media="print">
+
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
         <link rel="stylesheet" href="fonts/fonts.css">
+
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
-        <script type="text/javascript">
+        <script>
             var path_to_root = "";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
-        <script type="text/javascript">
+        <script>
             try {
                 var theme = localStorage.getItem('mdbook-theme');
                 var sidebar = localStorage.getItem('mdbook-sidebar');
@@ -50,7 +56,7 @@
         </script>
 
         <!-- Set the theme before any content is loaded, prevents flash -->
-        <script type="text/javascript">
+        <script>
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
@@ -62,7 +68,7 @@
         </script>
 
         <!-- Hide / unhide sidebar before it is displayed -->
-        <script type="text/javascript">
+        <script>
             var html = document.querySelector('html');
             var sidebar = 'hidden';
             if (document.body.clientWidth >= 1080) {
@@ -83,7 +89,7 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                <div id="menu-bar-hover-placeholder"></div>
+                                <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky bordered">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
@@ -93,7 +99,7 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
@@ -113,6 +119,7 @@
                         <a href="https://github.com/purescript-contrib/purescript-book" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
+
                     </div>
                 </div>
 
@@ -126,8 +133,9 @@
                         </ul>
                     </div>
                 </div>
+
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
-                <script type="text/javascript">
+                <script>
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
                     document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
                     Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
@@ -152,7 +160,10 @@
 <p>The <code>Example/Rectangle.purs</code> file contains a simple introductory example, which draws a single blue rectangle at the center of the canvas. The module imports the <code>Effect</code> type from the <code>Effect</code> module, and also the <code>Graphics.Canvas</code> module, which contains actions in the <code>Effect</code> monad for working with the Canvas API.</p>
 <p>The <code>main</code> action starts, like in the other modules, by using the <code>getCanvasElementById</code> action to get a reference to the canvas object, and the <code>getContext2D</code> action to access the 2D rendering context for the canvas:</p>
 <p>The <code>void</code> function takes a functor and replaces its value with <code>Unit</code>. In the example it is used to make <code>main</code> conform with its signature.</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">main :: Effect Unit
+main = void $ unsafePartial do
+  Just canvas &lt;- getCanvasElementById &quot;canvas&quot;
+  ctx &lt;- getContext2D canvas
 </code></pre>
 <p><em>Note</em>: the call to <code>unsafePartial</code> here is necessary since the pattern match on the result of <code>getCanvasElementById</code> is partial, matching only the <code>Just</code> constructor. For our purposes, this is fine, but in production code, we would probably want to match the <code>Nothing</code> constructor and provide an appropriate error message.</p>
 <p>The types of these actions can be found using PSCi or by looking at the documentation:</p>
@@ -163,14 +174,19 @@ getContext2D :: CanvasElement -&gt; Effect Context2D
 <p><code>CanvasElement</code> and <code>Context2D</code> are types defined in the <code>Graphics.Canvas</code> module. The same module also defines the <code>Canvas</code> effect, which is used by all of the actions in the module.</p>
 <p>The graphics context <code>ctx</code> manages the state of the canvas, and provides methods to render primitive shapes, set styles and colors, and apply transformations.</p>
 <p>We continue by setting the fill style to solid blue using the <code>setFillStyle</code> action. The longer hex notation of <code>#0000FF</code> may also be used for blue, but shorthand notation is easier for simple colors:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  setFillStyle ctx &quot;#00F&quot;
 </code></pre>
 <p>Note that the <code>setFillStyle</code> action takes the graphics context as an argument. This is a common pattern in the <code>Graphics.Canvas</code> module.</p>
 <p>Finally, we use the <code>fillPath</code> action to fill the rectangle. <code>fillPath</code> has the following type:</p>
 <pre><code class="language-haskell">fillPath :: forall a. Context2D -&gt; Effect a -&gt; Effect a
 </code></pre>
 <p><code>fillPath</code> takes a graphics context and another action which builds the path to render. To build a path, we can use the <code>rect</code> action. <code>rect</code> takes a graphics context, and a record which provides the position and size of the rectangle:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  fillPath ctx $ rect ctx
+    { x: 250.0
+    , y: 250.0
+    , width: 100.0
+    , height: 100.0
+    }
 </code></pre>
 <p>Build the rectangle example, providing <code>Example.Rectangle</code> as the name of the main module:</p>
 <pre><code class="language-text">$ spago bundle-app --main Example.Rectangle --to dist/Main.js
@@ -209,13 +225,28 @@ getContext2D :: CanvasElement -&gt; Effect Context2D
 </code></pre>
 <p>Notice that both the <code>Rectangle</code> and <code>Arc</code> record types contain <code>x</code> and <code>y</code> properties of type <code>Number</code>. In both cases, this pair represents a point. This means that we can write row-polymorphic functions which can act on either type of record.</p>
 <p>For example, the <code>Shapes</code> module defines a <code>translate</code> function which translates a shape by modifying its <code>x</code> and <code>y</code> properties:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">translate
+  :: forall r
+   . Number
+  -&gt; Number
+  -&gt; { x :: Number, y :: Number | r }
+  -&gt; { x :: Number, y :: Number | r }
+translate dx dy shape = shape
+  { x = shape.x + dx
+  , y = shape.y + dy
+  }
 </code></pre>
 <p>Notice the row-polymorphic type. It says that <code>translate</code> accepts any record with <code>x</code> and <code>y</code> properties <em>and any other properties</em>, and returns the same type of record. The <code>x</code> and <code>y</code> fields are updated, but the rest of the fields remain unchanged.</p>
 <p>This is an example of <em>record update syntax</em>. The expression <code>shape { ... }</code> creates a new record based on the <code>shape</code> record, with the fields inside the braces updated to the specified values. Note that the expressions inside the braces are separated from their labels by equals symbols, not colons like in record literals.</p>
 <p>The <code>translate</code> function can be used with both the <code>Rectangle</code> and <code>Arc</code> records, as can be seen in the <code>Shapes</code> example.</p>
 <p>The third type of path rendered in the <code>Shapes</code> example is a piecewise-linear path. Here is the corresponding code:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  setFillStyle ctx &quot;#F00&quot;
+
+  fillPath ctx $ do
+    moveTo ctx 300.0 260.0
+    lineTo ctx 260.0 340.0
+    lineTo ctx 340.0 340.0
+    closePath ctx
 </code></pre>
 <p>There are three functions in use here:</p>
 <ul>
@@ -256,16 +287,29 @@ getContext2D :: CanvasElement -&gt; Effect Context2D
 <h2 id="drawing-random-circles"><a class="header" href="#drawing-random-circles">Drawing Random Circles</a></h2>
 <p>The <code>Example/Random.purs</code> file contains an example which uses the <code>Effect</code> monad to interleave two different types of side-effect: random number generation, and canvas manipulation. The example renders one hundred randomly generated circles onto the canvas.</p>
 <p>The <code>main</code> action obtains a reference to the graphics context as before, and then sets the stroke and fill styles:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  setFillStyle ctx &quot;#F00&quot;
+  setStrokeStyle ctx &quot;#000&quot;
 </code></pre>
 <p>Next, the code uses the <code>for_</code> function to loop over the integers between <code>0</code> and <code>100</code>:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  for_ (1 .. 100) \_ -&gt; do
 </code></pre>
 <p>On each iteration, the do notation block starts by generating three random numbers distributed between <code>0</code> and <code>1</code>. These numbers represent the <code>x</code> and <code>y</code> coordinates, and the radius of a circle:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">    x &lt;- random
+    y &lt;- random
+    r &lt;- random
 </code></pre>
 <p>Next, for each circle, the code creates an <code>Arc</code> based on these parameters and finally fills and strokes the arc with the current styles:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">    let path = arc ctx
+         { x                  : x * 600.0
+         , y                  : y * 600.0
+         , radius             : r * 50.0
+         , start              : 0.0
+         , end                : Number.tau
+         , useCounterClockwise: false
+         }
+
+    fillPath ctx path
+    strokePath ctx path
 </code></pre>
 <p>Build this example by specifying the <code>Example.Random</code> module as the main module:</p>
 <pre><code class="language-text">$ spago bundle-app --main Example.Random --to dist/Main.js
@@ -346,13 +390,27 @@ Type -&gt; Type
 <p>A value of type <code>Ref a</code> is a mutable reference cell containing a value of type <code>a</code>, used to track global mutation. As such, it should be used sparingly.</p>
 <p>The <code>Example/Refs.purs</code> file contains an example which uses a <code>Ref</code> to track mouse clicks on the <code>canvas</code> element.</p>
 <p>The code starts by creating a new reference containing the value <code>0</code>, by using the <code>new</code> action:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  clickCount &lt;- Ref.new 0
 </code></pre>
 <p>Inside the click event handler, the <code>modify</code> action is used to update the click count, and the updated value is returned.</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">    count &lt;- Ref.modify (\count -&gt; count + 1) clickCount
 </code></pre>
 <p>In the <code>render</code> function, the click count is used to determine the transformation applied to a rectangle:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  withContext ctx do
+    let scaleX = Number.sin (toNumber count * Number.tau / 8.0) + 1.5
+    let scaleY = Number.sin (toNumber count * Number.tau / 12.0) + 1.5
+
+    translate ctx { translateX: 300.0, translateY:  300.0 }
+    rotate ctx (toNumber count * Number.tau / 36.0)
+    scale ctx { scaleX: scaleX, scaleY: scaleY }
+    translate ctx { translateX: -100.0, translateY: -100.0 }
+
+    fillPath ctx $ rect ctx
+      { x: 0.0
+      , y: 0.0
+      , width: 200.0
+      , height: 200.0
+      }
 </code></pre>
 <p>This action uses <code>withContext</code> to preserve the original transformation, and then applies the following sequence of transformations (remember that transformations are applied bottom-to-top):</p>
 <ul>
@@ -388,16 +446,20 @@ FLFRRFLFLFLFRRFLFRRFLFRRFLFLFLFRRFLFRRFLFRRFLF...
 <p>and so on. Plotting a piecewise-linear path corresponding to this set of instruction approximates a curve called the <em>Koch curve</em>. Increasing the number of iterations increases the resolution of the curve.</p>
 <p>Let's translate this into the language of types and functions.</p>
 <p>We can represent our alphabet of letters with the following ADT:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">data Letter = L | R | F
 </code></pre>
 <p>This data type defines one data constructor for each letter in our alphabet.</p>
 <p>How can we represent the initial sequence of letters? Well, that's just an array of letters from our alphabet, which we will call a <code>Sentence</code>:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">type Sentence = Array Letter
 
-
+initial :: Sentence
+initial = [F, R, R, F, R, R, F, R, R]
 </code></pre>
 <p>Our production rules can be represented as a function from <code>Letter</code> to <code>Sentence</code> as follows:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">productions :: Letter -&gt; Sentence
+productions L = [L]
+productions R = [R]
+productions F = [F, L, F, R, R, F, L, F]
 </code></pre>
 <p>This is just copied straight from the specification above.</p>
 <p>Now we can implement a function <code>lsystem</code> which will take a specification in this form, and render it to the canvas. What type should <code>lsystem</code> have? Well, it needs to take values like <code>initial</code> and <code>productions</code> as arguments, as well as a function which can render a letter of the alphabet to the canvas.</p>
@@ -430,11 +492,16 @@ FLFRRFLFLFLFRRFLFRRFLFRRFLFLFLFRRFLFRRFLFRRFLF...
 <p>Firstly, the type <code>s</code> was added as the type of an additional argument to <code>lsystem</code>. This argument will represent the initial state of the L-system.</p>
 <p>The type <code>s</code> also appears as an argument to, and as the return type of the interpretation function (the third argument to <code>lsystem</code>). The interpretation function will now receive the current state of the L-system as an argument, and will return a new, updated state as its return value.</p>
 <p>In the case of our example, we can define use following type to represent the state:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">type State =
+  { x :: Number
+  , y :: Number
+  , theta :: Number
+  }
 </code></pre>
 <p>The properties <code>x</code> and <code>y</code> represent the current position of the path, and the <code>theta</code> property represents the current direction of the path, specified as the angle between the path direction and the horizontal axis, in radians.</p>
 <p>The initial state of the system might be specified as follows:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">initialState :: State
+initialState = { x: 120.0, y: 200.0, theta: 0.0 }
 </code></pre>
 <p>Now let's try to implement the <code>lsystem</code> function. We will find that its definition is remarkably simple.</p>
 <p>It seems reasonable that <code>lsystem</code> should recurse on its fourth argument (of type <code>Int</code>). On each step of the recursion, the current sentence will change, having been updated by using the production rules. With that in mind, let's begin by introducing names for the function arguments, and delegating to a helper function:</p>
@@ -445,34 +512,48 @@ FLFRRFLFLFLFRRFLFRRFLFRRFLFLFLFRRFLFRRFLFRRFLF...
         -&gt; Int
         -&gt; s
         -&gt; Effect s
-
+lsystem init prod interpret n state = go init n
+  where
 </code></pre>
 <p>The <code>go</code> function works by recursion on its second argument. There are two cases: when <code>n</code> is zero, and when <code>n</code> is non-zero.</p>
 <p>In the first case, the recursion is complete, and we simply need to interpret the current sentence according to the interpretation function. We have a sentence of type <code>Array a</code>, a state of type <code>s</code>, and a function of type <code>s -&gt; a -&gt; Effect s</code>. This sounds like a job for the <code>foldM</code> function which we defined earlier, and which is available from the <code>control</code> package:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  go s 0 = foldM interpret state s
 </code></pre>
 <p>What about in the non-zero case? In that case, we can simply apply the production rules to each letter of the current sentence, concatenate the results, and repeat by calling <code>go</code> recursively:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  go s i = go (concatMap prod s) (i - 1)
 </code></pre>
 <p>That's it! Note how the use of higher order functions like <code>foldM</code> and <code>concatMap</code> allowed us to communicate our ideas concisely.</p>
 <p>However, we're not quite done. The type we have given is actually still too specific. Note that we don't use any canvas operations anywhere in our implementation. Nor do we make use of the structure of the <code>Effect</code> monad at all. In fact, our function works for <em>any</em> monad <code>m</code>!</p>
 <p>Here is the more general type of <code>lsystem</code>, as specified in the accompanying source code for this chapter:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">lsystem :: forall a m s
+         . Monad m
+         =&gt; Array a
+         -&gt; (a -&gt; Array a)
+         -&gt; (s -&gt; a -&gt; m s)
+         -&gt; Int
+         -&gt; s
+         -&gt; m s
 </code></pre>
 <p>We can understand this type as saying that our interpretation function is free to have any side-effects at all, captured by the monad <code>m</code>. It might render to the canvas, or print information to the console, or support failure or multiple return values. The reader is encouraged to try writing L-systems which use these various types of side-effect.</p>
 <p>This function is a good example of the power of separating data from implementation. The advantage of this approach is that we gain the freedom to interpret our data in multiple different ways. We might even factor <code>lsystem</code> into two smaller functions: the first would build the sentence using repeated application of <code>concatMap</code>, and the second would interpret the sentence using <code>foldM</code>. This is also left as an exercise for the reader.</p>
 <p>Let's complete our example by implementing its interpretation function. The type of <code>lsystem</code> tells us that its type signature must be <code>s -&gt; a -&gt; m s</code> for some types <code>a</code> and <code>s</code> and a type constructor <code>m</code>. We know that we want <code>a</code> to be <code>Letter</code> and <code>s</code> to be <code>State</code>, and for the monad <code>m</code> we can choose <code>Effect</code>. This gives us the following type:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">    interpret :: State -&gt; Letter -&gt; Effect State
 </code></pre>
 <p>To implement this function, we need to handle the three data constructors of the <code>Letter</code> type. To interpret the letters <code>L</code> (move left) and <code>R</code> (move right), we simply have to update the state to change the angle <code>theta</code> appropriately:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">    interpret state L = pure $ state { theta = state.theta - Number.tau / 6.0 }
+    interpret state R = pure $ state { theta = state.theta + Number.tau / 6.0 }
 </code></pre>
 <p>To interpret the letter <code>F</code> (move forward), we can calculate the new position of the path, render a line segment, and update the state, as follows:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">    interpret state F = do
+      let x = state.x + Number.cos state.theta * 1.5
+          y = state.y + Number.sin state.theta * 1.5
+      moveTo ctx state.x state.y
+      lineTo ctx x y
+      pure { x, y, theta: state.theta }
 </code></pre>
 <p>Note that in the source code for this chapter, the <code>interpret</code> function is defined using a <code>let</code> binding inside the <code>main</code> function, so that the name <code>ctx</code> is in scope. It would also be possible to move the context into the <code>State</code> type, but this would be inappropriate because it is not a changing part of the state of the system.</p>
 <p>To render this L-system, we can simply use the <code>strokePath</code> action:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">  strokePath ctx $ lsystem initial productions interpret 5 initialState
 </code></pre>
 <p>Compile the L-system example using</p>
 <pre><code class="language-text">$ spago bundle-app --main Example.LSystem --to dist/Main.js
@@ -540,9 +621,11 @@ M -&gt; MRFRMLFLMLFLMRFRM
                             <a rel="prev" href="chapter11.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
+
                             <a rel="next" href="chapter13.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
+
                         <div style="clear: both"></div>
                     </nav>
                 </div>
@@ -552,6 +635,7 @@ M -&gt; MRFRMLFLMLFLMRFRM
                     <a rel="prev" href="chapter11.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
+
                     <a rel="next" href="chapter13.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
@@ -559,16 +643,25 @@ M -&gt; MRFRMLFLMLFLMRFRM
 
         </div>
 
-        <script type="text/javascript">
+
+
+
+        <script>
             window.playground_copyable = true;
         </script>
-        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
-        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
-        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
 
         <!-- Custom JS scripts -->
+
+
+    </div>
     </body>
 </html>

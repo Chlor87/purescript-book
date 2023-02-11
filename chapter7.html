@@ -4,8 +4,10 @@
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Applicative Validation - PureScript by Example</title>
+
+
         <!-- Custom HTML head -->
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
@@ -16,25 +18,29 @@
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
         <link rel="stylesheet" href="css/print.css" media="print">
+
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
         <link rel="stylesheet" href="fonts/fonts.css">
+
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
-        <script type="text/javascript">
+        <script>
             var path_to_root = "";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
-        <script type="text/javascript">
+        <script>
             try {
                 var theme = localStorage.getItem('mdbook-theme');
                 var sidebar = localStorage.getItem('mdbook-sidebar');
@@ -50,7 +56,7 @@
         </script>
 
         <!-- Set the theme before any content is loaded, prevents flash -->
-        <script type="text/javascript">
+        <script>
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
@@ -62,7 +68,7 @@
         </script>
 
         <!-- Hide / unhide sidebar before it is displayed -->
-        <script type="text/javascript">
+        <script>
             var html = document.querySelector('html');
             var sidebar = 'hidden';
             if (document.body.clientWidth >= 1080) {
@@ -83,7 +89,7 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                <div id="menu-bar-hover-placeholder"></div>
+                                <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky bordered">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
@@ -93,7 +99,7 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
@@ -113,6 +119,7 @@
                         <a href="https://github.com/purescript-contrib/purescript-book" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
+
                     </div>
                 </div>
 
@@ -126,8 +133,9 @@
                         </ul>
                     </div>
                 </div>
+
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
-                <script type="text/javascript">
+                <script>
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
                     document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
                     Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
@@ -153,7 +161,7 @@
 <h2 id="generalizing-function-application"><a class="header" href="#generalizing-function-application">Generalizing Function Application</a></h2>
 <p>To explain the concept of an <em>applicative functor</em>, let's consider the type constructor <code>Maybe</code> that we met earlier.</p>
 <p>The source code for this module defines a function <code>address</code> which has the following type:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">address :: String -&gt; String -&gt; String -&gt; Address
 </code></pre>
 <p>This function is used to construct a value of type <code>Address</code> from three strings: a street name, a city, and a state.</p>
 <p>We can apply this function easily and see the result in PSCi:</p>
@@ -394,17 +402,27 @@ Nothing
 </ol>
 <h2 id="applicative-validation-1"><a class="header" href="#applicative-validation-1">Applicative Validation</a></h2>
 <p>The source code for this chapter defines several data types which might be used in an address book application. The details are omitted here, but the key functions which are exported by the <code>Data.AddressBook</code> module have the following types:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">address :: String -&gt; String -&gt; String -&gt; Address
 
+phoneNumber :: PhoneType -&gt; String -&gt; PhoneNumber
 
-
-
+person :: String -&gt; String -&gt; Address -&gt; Array PhoneNumber -&gt; Person
 </code></pre>
 <p>where <code>PhoneType</code> is defined as an algebraic data type:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">data PhoneType
+  = HomePhone
+  | WorkPhone
+  | CellPhone
+  | OtherPhone
 </code></pre>
 <p>These functions can be used to construct a <code>Person</code> representing an address book entry. For example, the following value is defined in <code>Data.AddressBook</code>:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">examplePerson :: Person
+examplePerson =
+  person &quot;John&quot; &quot;Smith&quot;
+    (address &quot;123 Fake St.&quot; &quot;FakeTown&quot; &quot;CA&quot;)
+    [ phoneNumber HomePhone &quot;555-555-5555&quot;
+    , phoneNumber CellPhone &quot;555-555-0000&quot;
+    ]
 </code></pre>
 <p>Test this value in PSCi (this result has been formatted):</p>
 <pre><code class="language-text">&gt; import Data.AddressBook
@@ -428,12 +446,23 @@ Nothing
 }
 </code></pre>
 <p>We saw in a previous section how we could use the <code>Either String</code> functor to validate a data structure of type <code>Person</code>. For example, provided functions to validate the two names in the structure, we might validate the entire data structure as follows:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">nonEmpty1 :: String -&gt; Either String String
+nonEmpty1 &quot;&quot;     = Left &quot;Field cannot be empty&quot;
+nonEmpty1 value  = Right value
 
-
+validatePerson1 :: Person -&gt; Either String Person
+validatePerson1 p =
+  person &lt;$&gt; nonEmpty1 p.firstName
+         &lt;*&gt; nonEmpty1 p.lastName
+         &lt;*&gt; pure p.homeAddress
+         &lt;*&gt; pure p.phones
 </code></pre>
 <p>or with <em>applicative do</em></p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">validatePerson1Ado :: Person -&gt; Either String Person
+validatePerson1Ado p = ado
+  f &lt;- nonEmpty1 p.firstName
+  l &lt;- nonEmpty1 p.lastName
+  in person f l p.homeAddress p.phones
 </code></pre>
 <p>In the first two lines, we use the <code>nonEmpty1</code> function to validate a non-empty string. <code>nonEmpty1</code> returns an error indicated with the <code>Left</code> constructor if its input is empty, otherwise it returns the value wrapped with the <code>Right</code> constructor.</p>
 <p>The final lines do not perform any validation but simply provide the <code>address</code> and <code>phones</code> fields to the <code>person</code> function as the remaining arguments.</p>
@@ -445,16 +474,31 @@ Nothing
 <p>There is another applicative functor which is provided by the <code>validation</code> library. This functor is called <code>V</code>, and it provides the ability to return errors in any <em>semigroup</em>. For example, we can use <code>V (Array String)</code> to return an array of <code>String</code>s as errors, concatenating new errors onto the end of the array.</p>
 <p>The <code>Data.AddressBook.Validation</code> module uses the <code>V (Array String)</code> applicative functor to validate the data structures in the <code>Data.AddressBook</code> module.</p>
 <p>Here is an example of a validator taken from the <code>Data.AddressBook.Validation</code> module:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">type Errors
+  = Array String
 
+nonEmpty :: String -&gt; String -&gt; V Errors String
+nonEmpty field &quot;&quot;     = invalid [ &quot;Field '&quot; &lt;&gt; field &lt;&gt; &quot;' cannot be empty&quot; ]
+nonEmpty _     value  = pure value
 
+lengthIs :: String -&gt; Int -&gt; String -&gt; V Errors String
+lengthIs field len value | length value /= len =
+  invalid [ &quot;Field '&quot; &lt;&gt; field &lt;&gt; &quot;' must have length &quot; &lt;&gt; show len ]
+lengthIs _     _   value = pure value
 
-
-
-
+validateAddress :: Address -&gt; V Errors Address
+validateAddress a =
+  address &lt;$&gt; nonEmpty &quot;Street&quot;  a.street
+          &lt;*&gt; nonEmpty &quot;City&quot;    a.city
+          &lt;*&gt; lengthIs &quot;State&quot; 2 a.state
 </code></pre>
 <p>or with <em>applicative do</em></p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">validateAddressAdo :: Address -&gt; V Errors Address
+validateAddressAdo a = ado
+  street &lt;- nonEmpty &quot;Street&quot;  a.street
+  city   &lt;- nonEmpty &quot;City&quot;    a.city
+  state  &lt;- lengthIs &quot;State&quot; 2 a.state
+  in address street city state
 </code></pre>
 <p><code>validateAddress</code> validates an <code>Address</code> structure. It checks that the <code>street</code> and <code>city</code> fields are non-empty, and checks that the string in the <code>state</code> field has length 2.</p>
 <p>Notice how the <code>nonEmpty</code> and <code>lengthIs</code> validator functions both use the <code>invalid</code> function provided by the <code>Data.Validation</code> module to indicate an error. Since we are working in the <code>Array String</code> semigroup, <code>invalid</code> takes an array of strings as its argument.</p>
@@ -476,14 +520,24 @@ Nothing
 <p>This time, we receive an array of all validation errors.</p>
 <h2 id="regular-expression-validators"><a class="header" href="#regular-expression-validators">Regular Expression Validators</a></h2>
 <p>The <code>validatePhoneNumber</code> function uses a regular expression to validate the form of its argument. The key is a <code>matches</code> validation function, which uses a <code>Regex</code> from the <code>Data.String.Regex</code> module to validate its input:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">matches :: String -&gt; Regex -&gt; String -&gt; V Errors String
+matches _     regex value | test regex value
+                          = pure value
+matches field _     _     = invalid [ &quot;Field '&quot; &lt;&gt; field &lt;&gt; &quot;' did not match the required format&quot; ]
 </code></pre>
 <p>Again, notice how <code>pure</code> is used to indicate successful validation, and <code>invalid</code> is used to signal an array of errors.</p>
 <p><code>validatePhoneNumber</code> is built from the <code>matches</code> function in the same way as before:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">validatePhoneNumber :: PhoneNumber -&gt; V Errors PhoneNumber
+validatePhoneNumber pn =
+  phoneNumber &lt;$&gt; pure pn.&quot;type&quot;
+              &lt;*&gt; matches &quot;Number&quot; phoneNumberRegex pn.number
 </code></pre>
 <p>or with <em>applicative do</em></p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">validatePhoneNumberAdo :: PhoneNumber -&gt; V Errors PhoneNumber
+validatePhoneNumberAdo pn = ado
+  tpe    &lt;- pure pn.&quot;type&quot;
+  number &lt;- matches &quot;Number&quot; phoneNumberRegex pn.number
+  in phoneNumber tpe number
 </code></pre>
 <p>Again, try running this validator against some valid and invalid inputs in PSCi:</p>
 <pre><code class="language-text">&gt; validatePhoneNumber $ phoneNumber HomePhone &quot;555-555-5555&quot;
@@ -500,12 +554,27 @@ invalid ([&quot;Field 'Number' did not match the required format&quot;])
 </ol>
 <h2 id="traversable-functors"><a class="header" href="#traversable-functors">Traversable Functors</a></h2>
 <p>The remaining validator is <code>validatePerson</code>, which combines the validators we have seen so far to validate an entire <code>Person</code> structure, including the following new <code>validatePhoneNumbers</code> function:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">validatePhoneNumbers :: String -&gt; Array PhoneNumber -&gt; V Errors (Array PhoneNumber)
+validatePhoneNumbers field []      =
+  invalid [ &quot;Field '&quot; &lt;&gt; field &lt;&gt; &quot;' must contain at least one value&quot; ]
+validatePhoneNumbers _     phones  =
+  traverse validatePhoneNumber phones
 
-
+validatePerson :: Person -&gt; V Errors Person
+validatePerson p =
+  person &lt;$&gt; nonEmpty &quot;First Name&quot; p.firstName
+         &lt;*&gt; nonEmpty &quot;Last Name&quot; p.lastName
+         &lt;*&gt; validateAddress p.homeAddress
+         &lt;*&gt; validatePhoneNumbers &quot;Phone Numbers&quot; p.phones
 </code></pre>
 <p>or with <em>applicative do</em></p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">validatePersonAdo :: Person -&gt; V Errors Person
+validatePersonAdo p = ado
+  firstName &lt;- nonEmpty &quot;First Name&quot; p.firstName
+  lastName  &lt;- nonEmpty &quot;Last Name&quot; p.lastName
+  address   &lt;- validateAddress p.homeAddress
+  numbers   &lt;- validatePhoneNumbers &quot;Phone Numbers&quot; p.phones
+  in person firstName lastName address numbers
 </code></pre>
 <p><code>validatePhoneNumbers</code> uses a new function we haven't seen before - <code>traverse</code>.</p>
 <p><code>traverse</code> is defined in the <code>Data.Traversable</code> module, in the <code>Traversable</code> type class:</p>
@@ -563,7 +632,7 @@ pure ((Just &quot;Testing&quot;))
 </code></pre>
 <p>Recall from the previous chapter that you may either write these instances manually or let the compiler derive them for you.</p>
 <p>There are many &quot;correct&quot; formatting options for <code>Show</code> output. The test for this exercise expects the following whitespace style. This happens to match the default formatting of generic show, so you only need to make note of this if you're planning on writing this instance manually.</p>
-<pre><code>(Branch (Branch Leaf 8 Leaf) 42 Leaf)
+<pre><code class="language-haskell">(Branch (Branch Leaf 8 Leaf) 42 Leaf)
 </code></pre>
 </li>
 <li>
@@ -613,9 +682,11 @@ pure ((Just &quot;Testing&quot;))
                             <a rel="prev" href="chapter6.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
+
                             <a rel="next" href="chapter8.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
+
                         <div style="clear: both"></div>
                     </nav>
                 </div>
@@ -625,6 +696,7 @@ pure ((Just &quot;Testing&quot;))
                     <a rel="prev" href="chapter6.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
+
                     <a rel="next" href="chapter8.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
@@ -632,16 +704,25 @@ pure ((Just &quot;Testing&quot;))
 
         </div>
 
-        <script type="text/javascript">
+
+
+
+        <script>
             window.playground_copyable = true;
         </script>
-        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
-        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
-        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
 
         <!-- Custom JS scripts -->
+
+
+    </div>
     </body>
 </html>

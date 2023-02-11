@@ -4,8 +4,10 @@
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>The Foreign Function Interface - PureScript by Example</title>
+
+
         <!-- Custom HTML head -->
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
@@ -16,25 +18,29 @@
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
         <link rel="stylesheet" href="css/print.css" media="print">
+
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
         <link rel="stylesheet" href="fonts/fonts.css">
+
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
-        <script type="text/javascript">
+        <script>
             var path_to_root = "";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
-        <script type="text/javascript">
+        <script>
             try {
                 var theme = localStorage.getItem('mdbook-theme');
                 var sidebar = localStorage.getItem('mdbook-sidebar');
@@ -50,7 +56,7 @@
         </script>
 
         <!-- Set the theme before any content is loaded, prevents flash -->
-        <script type="text/javascript">
+        <script>
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
@@ -62,7 +68,7 @@
         </script>
 
         <!-- Hide / unhide sidebar before it is displayed -->
-        <script type="text/javascript">
+        <script>
             var html = document.querySelector('html');
             var sidebar = 'hidden';
             if (document.body.clientWidth >= 1080) {
@@ -83,7 +89,7 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                <div id="menu-bar-hover-placeholder"></div>
+                                <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky bordered">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
@@ -93,7 +99,7 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
@@ -113,6 +119,7 @@
                         <a href="https://github.com/purescript-contrib/purescript-book" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
+
                     </div>
                 </div>
 
@@ -126,8 +133,9 @@
                         </ul>
                     </div>
                 </div>
+
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
-                <script type="text/javascript">
+                <script>
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
                     document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
                     Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
@@ -196,7 +204,9 @@ export const _encodeURIComponent = encodeURIComponent;
 <p><code>test/Examples.js</code>:</p>
 <pre><code class="language-js">&quot;use strict&quot;;
 
-
+export const square = function (n) {
+  return n * n;
+};
 </code></pre>
 <p><code>test/Examples.purs</code>:</p>
 <pre><code class="language-hs">module Test.Examples where
@@ -211,15 +221,20 @@ foreign import square :: Number -&gt; Number
 </code></pre>
 <h2 id="functions-of-multiple-arguments"><a class="header" href="#functions-of-multiple-arguments">Functions of Multiple Arguments</a></h2>
 <p>Let's rewrite our <code>diagonal</code> function from Chapter 2 in a foreign module. This function calculates the diagonal of a right-angled triangle.</p>
-<pre><code class="language-hs">
+<pre><code class="language-hs">foreign import diagonal :: Number -&gt; Number -&gt; Number
 </code></pre>
 <p>Recall that functions in PureScript are <em>curried</em>. <code>diagonal</code> is a function that takes a <code>Number</code> and returns a <em>function</em>, that takes a <code>Number</code> and returns a <code>Number</code>.</p>
-<pre><code class="language-js">
+<pre><code class="language-js">export const diagonal = function (w) {
+  return function (h) {
+    return Math.sqrt(w * w + h * h);
+  };
+};
 </code></pre>
 <p>Or with ES6 arrow syntax (see ES6 note below).</p>
-<pre><code class="language-js">
+<pre><code class="language-js">export const diagonalArrow = w =&gt; h =&gt;
+  Math.sqrt(w * w + h * h);
 </code></pre>
-<pre><code class="language-hs">
+<pre><code class="language-hs">foreign import diagonalArrow :: Number -&gt; Number -&gt; Number
 </code></pre>
 <pre><code class="language-text">$ spago repl
 
@@ -231,10 +246,12 @@ foreign import square :: Number -&gt; Number
 </code></pre>
 <h2 id="uncurried-functions"><a class="header" href="#uncurried-functions">Uncurried Functions</a></h2>
 <p>Writing curried functions in JavaScript isn't always feasible, despite being scarcely idiomatic. A typical multi-argument JavaScript function would be of the <em>uncurried</em> form:</p>
-<pre><code class="language-js">
+<pre><code class="language-js">export const diagonalUncurried = function (w, h) {
+  return Math.sqrt(w * w + h * h);
+};
 </code></pre>
 <p>The module <code>Data.Function.Uncurried</code> exports <em>wrapper</em> types and utility functions to work with uncurried functions.</p>
-<pre><code class="language-hs">
+<pre><code class="language-hs">foreign import diagonalUncurried :: Fn2 Number Number Number
 </code></pre>
 <p>Inspecting the type constructor <code>Fn2</code>:</p>
 <pre><code class="language-text">$ spago repl
@@ -256,10 +273,12 @@ Type -&gt; Type -&gt; Type -&gt; Type
 <h2 id="a-note-about-uncurried-functions"><a class="header" href="#a-note-about-uncurried-functions">A Note About Uncurried Functions</a></h2>
 <p>PureScript's curried functions has certain advantages. It allows us to partially apply functions, and to give type class instances for function types - but it comes with a performance penalty. For performance critical code, it is sometimes necessary to define uncurried JavaScript functions which accept multiple arguments.</p>
 <p>We can also create uncurried functions from PureScript. For a function of two arguments, we can use the <code>mkFn2</code> function.</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">uncurriedAdd :: Fn2 Int Int Int
+uncurriedAdd = mkFn2 \n m -&gt; m + n
 </code></pre>
 <p>We can apply the uncurried function of two arguments by using <code>runFn2</code> as before:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">uncurriedSum :: Int
+uncurriedSum = runFn2 uncurriedAdd 3 10
 </code></pre>
 <p>The key here is that the compiler <em>inlines</em> the <code>mkFn2</code> and <code>runFn2</code> functions whenever they are fully applied. The result is that the generated code is very compact:</p>
 <pre><code class="language-javascript">var uncurriedAdd = function (n, m) {
@@ -269,7 +288,11 @@ Type -&gt; Type -&gt; Type -&gt; Type
 var uncurriedSum = uncurriedAdd(3, 10);
 </code></pre>
 <p>For contrast, here is a traditional curried function:</p>
-<pre><code class="language-haskell">
+<pre><code class="language-haskell">curriedAdd :: Int -&gt; Int -&gt; Int
+curriedAdd n m = m + n
+
+curriedSum :: Int
+curriedSum = curriedAdd 3 10
 </code></pre>
 <p>and the resulting generated code, which is less compact due to the nested functions:</p>
 <pre><code class="language-javascript">var curriedAdd = function (n) {
@@ -678,9 +701,11 @@ foreign import addComplexJson :: Complex -&gt; Complex -&gt; Json
 export const addComplexJson = addComplexBroken
 </code></pre>
 <p>And then write a wrapper to decode the returned foreign <code>Json</code> value:</p>
-<pre><code class="language-hs">
+<pre><code class="language-hs">cumulativeSumsDecoded :: Array Int -&gt; Either JsonDecodeError (Array Int)
+cumulativeSumsDecoded arr = decodeJson $ cumulativeSumsJson arr
 
-
+addComplexDecoded :: Complex -&gt; Complex -&gt; Either JsonDecodeError Complex
+addComplexDecoded a b = decodeJson $ addComplexJson a b
 </code></pre>
 <p>Then any values that can't be successfully decoded to our return type appear as a <code>Left</code> error <code>String</code>:</p>
 <pre><code class="language-text">$ spago repl
@@ -710,7 +735,10 @@ export const addComplexJson = addComplex
 </code></pre>
 <p>Using JSON is also the easiest way to pass other structural types, such as <code>Map</code> and <code>Set</code> through the FFI. Note that since JSON only consists of booleans, numbers, strings, arrays, and objects of other JSON values, we can't write a <code>Map</code> and <code>Set</code> directly in JSON. But we can represent these structures as arrays (assuming the keys and values can also be represented in JSON), and then decode them back to <code>Map</code> or <code>Set</code>.</p>
 <p>Here's an example of a foreign function signature that modifies a <code>Map</code> of <code>String</code> keys and <code>Int</code> values, along with the wrapper function that handles JSON encoding and decoding.</p>
-<pre><code class="language-hs">
+<pre><code class="language-hs">foreign import mapSetFooJson :: Json -&gt; Json
+
+mapSetFoo :: Map String Int -&gt; Either JsonDecodeError (Map String Int)
+mapSetFoo = encodeJson &gt;&gt;&gt; mapSetFooJson &gt;&gt;&gt; decodeJson
 </code></pre>
 <p>Note that this is a prime use case for function composition. Both of these alternatives are equivalent to the above:</p>
 <pre><code class="language-hs">mapSetFoo :: Map String Int -&gt; Either JsonDecodeError (Map String Int)
@@ -833,9 +861,15 @@ validateAndSave = do
     Data.Argonaut.Encode.Class.EncodeJson PhoneType
 </code></pre>
 <p>This is because <code>PhoneType</code> in the <code>Person</code> record needs an <code>EncodeJson</code> instance. We'll just derive a generic encode instance, and a decode instance too while we're at it. More information how this works is available in the argonaut docs:</p>
-<pre><code class="language-hs">
+<pre><code class="language-hs">import Data.Argonaut (class DecodeJson, class EncodeJson)
+import Data.Argonaut.Decode.Generic (genericDecodeJson)
+import Data.Argonaut.Encode.Generic (genericEncodeJson)
+import Data.Generic.Rep (class Generic)
 
+derive instance genericPhoneType :: Generic PhoneType _
 
+instance encodeJsonPhoneType :: EncodeJson PhoneType where encodeJson = genericEncodeJson
+instance decodeJsonPhoneType :: DecodeJson PhoneType where decodeJson = genericDecodeJson
 </code></pre>
 <p>Now we can save our <code>person</code> to local storage, but this isn't very useful unless we can retrieve the data. We'll tackle that next.</p>
 <p>We'll start with retrieving the &quot;person&quot; string from local storage:</p>
@@ -904,8 +938,8 @@ alert $ &quot;Error: &quot; &lt;&gt; err &lt;&gt; &quot;. Loading examplePerson&
 <li>We saw how to safely serialize and deserialize JSON data.</li>
 </ul>
 <p>For more examples, the <code>purescript</code>, <code>purescript-contrib</code> and <code>purescript-node</code> GitHub organizations provide plenty of examples of libraries which use the FFI. In the remaining chapters, we will see some of these libraries put to use to solve real-world problems in a type-safe way.</p>
-<h1 id="addendum"><a class="header" href="#addendum">Addendum</a></h1>
-<h2 id="calling-purescript-from-javascript"><a class="header" href="#calling-purescript-from-javascript">Calling PureScript from JavaScript</a></h2>
+<h2 id="addendum"><a class="header" href="#addendum">Addendum</a></h2>
+<h3 id="calling-purescript-from-javascript"><a class="header" href="#calling-purescript-from-javascript">Calling PureScript from JavaScript</a></h3>
 <p>Calling a PureScript function from JavaScript is very simple, at least for functions with simple types.</p>
 <p>Let's take the following simple module as an example:</p>
 <pre><code class="language-haskell">module Test where
@@ -927,7 +961,7 @@ Test.gcd(15)(20);
 <pre><code class="language-javascript">var Test = PS.Test;
 Test.gcd(15)(20);
 </code></pre>
-<h2 id="understanding-name-generation"><a class="header" href="#understanding-name-generation">Understanding Name Generation</a></h2>
+<h3 id="understanding-name-generation"><a class="header" href="#understanding-name-generation">Understanding Name Generation</a></h3>
 <p>PureScript aims to preserve names during code generation as much as possible. In particular, most identifiers which are neither PureScript nor JavaScript keywords can be expected to be preserved, at least for names of top-level declarations.</p>
 <p>If you decide to use a JavaScript keyword as an identifier, the name will be escaped with a double dollar symbol. For example,</p>
 <pre><code class="language-haskell">null = []
@@ -942,18 +976,18 @@ Test.gcd(15)(20);
 <pre><code class="language-javascript">var example$prime = 100;
 </code></pre>
 <p>Where compiled PureScript code is intended to be called from JavaScript, it is recommended that identifiers only use alphanumeric characters, and avoid JavaScript keywords. If user-defined operators are provided for use in PureScript code, it is good practice to provide an alternative function with an alphanumeric name for use in JavaScript.</p>
-<h2 id="runtime-data-representation"><a class="header" href="#runtime-data-representation">Runtime Data Representation</a></h2>
+<h3 id="runtime-data-representation"><a class="header" href="#runtime-data-representation">Runtime Data Representation</a></h3>
 <p>Types allow us to reason at compile-time that our programs are &quot;correct&quot; in some sense - that is, they will not break at runtime. But what does that mean? In PureScript, it means that the type of an expression should be compatible with its representation at runtime.</p>
 <p>For that reason, it is important to understand the representation of data at runtime to be able to use PureScript and JavaScript code together effectively. This means that for any given PureScript expression, we should be able to understand the behavior of the value it will evaluate to at runtime.</p>
 <p>The good news is that PureScript expressions have particularly simple representations at runtime. It should always be possible to understand the runtime data representation of an expression by considering its type.</p>
 <p>For simple types, the correspondence is almost trivial. For example, if an expression has the type <code>Boolean</code>, then its value <code>v</code> at runtime should satisfy <code>typeof v === 'boolean'</code>. That is, expressions of type <code>Boolean</code> evaluate to one of the (JavaScript) values <code>true</code> or <code>false</code>. In particular, there is no PureScript expression of type <code>Boolean</code> which evaluates to <code>null</code> or <code>undefined</code>.</p>
-<p>A similar law holds for expressions of type <code>Int</code> <code>Number</code> and <code>String</code> - expressions of type <code>Int</code> or <code>Number</code> evaluate to non-null JavaScript numbers, and expressions of type <code>String</code> evaluate to non-null JavaScript strings. Expressions of type <code>Int</code> will evaluate to integers at runtime, even though they cannot not be distinguished from values of type <code>Number</code> by using <code>typeof</code>.</p>
+<p>A similar law holds for expressions of type <code>Int</code>, <code>Number</code>, and <code>String</code> - expressions of type <code>Int</code> or <code>Number</code> evaluate to non-null JavaScript numbers, and expressions of type <code>String</code> evaluate to non-null JavaScript strings. Expressions of type <code>Int</code> will evaluate to integers at runtime, even though they cannot be distinguished from values of type <code>Number</code> by using <code>typeof</code>.</p>
 <p>What about <code>Unit</code>? Well, since <code>Unit</code> has only one inhabitant (<code>unit</code>) and its value is not observable, it doesn't actually matter what it's represented with at runtime. Old code tends to represent it using <code>{}</code>. Newer code, however, tends to use <code>undefined</code>. So, although it doesn't really matter what you use to represent <code>Unit</code>, it is recommended to use <code>undefined</code> (not returning anything from a function also returns <code>undefined</code>).</p>
 <p>What about some more complex types?</p>
 <p>As we have already seen, PureScript functions correspond to JavaScript functions of a single argument. More precisely, if an expression <code>f</code> has type <code>a -&gt; b</code> for some types <code>a</code> and <code>b</code>, and an expression <code>x</code> evaluates to a value with the correct runtime representation for type <code>a</code>, then <code>f</code> evaluates to a JavaScript function, which when applied to the result of evaluating <code>x</code>, has the correct runtime representation for type <code>b</code>. As a simple example, an expression of type <code>String -&gt; String</code> evaluates to a function which takes non-null JavaScript strings to non-null JavaScript strings.</p>
 <p>As you might expect, PureScript's arrays correspond to JavaScript arrays. But remember - PureScript arrays are homogeneous, so every element has the same type. Concretely, if a PureScript expression <code>e</code> has type <code>Array a</code> for some type <code>a</code>, then <code>e</code> evaluates to a (non-null) JavaScript array, all of whose elements have the correct runtime representation for type <code>a</code>.</p>
 <p>We've already seen that PureScript's records evaluate to JavaScript objects. Just as for functions and arrays, we can reason about the runtime representation of data in a record's fields by considering the types associated with its labels. Of course, the fields of a record are not required to be of the same type.</p>
-<h2 id="representing-adts"><a class="header" href="#representing-adts">Representing ADTs</a></h2>
+<h3 id="representing-adts"><a class="header" href="#representing-adts">Representing ADTs</a></h3>
 <p>For every constructor of an algebraic data type, the PureScript compiler creates a new JavaScript object type by defining a function. Its constructors correspond to functions which create new JavaScript objects based on those prototypes.</p>
 <p>For example, consider the following simple ADT:</p>
 <pre><code class="language-haskell">data ZeroOrOne a = Zero | One a
@@ -995,7 +1029,7 @@ Two.create = function (value0) {
 <pre><code class="language-haskell">newtype PhoneNumber = PhoneNumber String
 </code></pre>
 <p>is actually represented as a JavaScript string at runtime. This is useful for designing libraries, since newtypes provide an additional layer of type safety, but without the runtime overhead of another function call.</p>
-<h2 id="representing-quantified-types"><a class="header" href="#representing-quantified-types">Representing Quantified Types</a></h2>
+<h3 id="representing-quantified-types"><a class="header" href="#representing-quantified-types">Representing Quantified Types</a></h3>
 <p>Expressions with quantified (polymorphic) types have restrictive representations at runtime. In practice, this means that there are relatively few expressions with a given quantified type, but that we can reason about them quite effectively.</p>
 <p>Consider this polymorphic type, for example:</p>
 <pre><code class="language-haskell">forall a. a -&gt; a
@@ -1018,7 +1052,7 @@ id a = a
 <p>Certainly, this function takes strings to strings, numbers to numbers, etc. but it does not meet the additional condition, since it inspects the (runtime) type of its argument, so this function would not be a valid inhabitant of the type <code>forall a. a -&gt; a</code>.</p>
 <p>Without being able to inspect the runtime type of our function argument, our only option is to return the argument unchanged, and so <code>identity</code> is indeed the only inhabitant of the type <code>forall a. a -&gt; a</code>.</p>
 <p>A full discussion of <em>parametric polymorphism</em> and <em>parametricity</em> is beyond the scope of this book. Note however, that since PureScript's types are <em>erased</em> at runtime, a polymorphic function in PureScript <em>cannot</em> inspect the runtime representation of its arguments (without using the FFI), and so this representation of polymorphic data is appropriate.</p>
-<h2 id="representing-constrained-types"><a class="header" href="#representing-constrained-types">Representing Constrained Types</a></h2>
+<h3 id="representing-constrained-types"><a class="header" href="#representing-constrained-types">Representing Constrained Types</a></h3>
 <p>Functions with a type class constraint have an interesting representation at runtime. Because the behavior of the function might depend on the type class instance chosen by the compiler, the function is given an additional argument, called a <em>type class dictionary</em>, which contains the implementation of the type class functions provided by the chosen instance.</p>
 <p>For example, here is a simple PureScript function with a constrained type which uses the <code>Show</code> type class:</p>
 <pre><code class="language-haskell">shout :: forall a. Show a =&gt; a -&gt; String
@@ -1037,7 +1071,7 @@ shout a = show a &lt;&gt; &quot;!!!&quot;
 
 shout(showNumber)(42);
 </code></pre>
-<h2 id="exercises-6"><a class="header" href="#exercises-6">Exercises</a></h2>
+<h3 id="exercises-6"><a class="header" href="#exercises-6">Exercises</a></h3>
 <ol>
 <li>
 <p>(Easy) What are the runtime representations of these types?</p>
@@ -1051,7 +1085,7 @@ forall a. Ord a =&gt; Array a -&gt; Boolean
 <p>(Medium) Try using the functions defined in the <code>arrays</code> package, calling them from JavaScript, by compiling the library using <code>spago build</code> and importing modules using the <code>import</code> function in NodeJS. <em>Hint</em>: you may need to configure the output path so that the generated ES modules are available on the NodeJS module path.</p>
 </li>
 </ol>
-<h2 id="representing-side-effects"><a class="header" href="#representing-side-effects">Representing Side Effects</a></h2>
+<h3 id="representing-side-effects"><a class="header" href="#representing-side-effects">Representing Side Effects</a></h3>
 <p>The <code>Effect</code> monad is also defined as a foreign type. Its runtime representation is quite simple - an expression of type <code>Effect a</code> should evaluate to a JavaScript function of <strong>no arguments</strong>, which performs any side-effects and returns a value with the correct runtime representation for type <code>a</code>.</p>
 <p>The definition of the <code>Effect</code> type constructor is given in the <code>Effect</code> module as follows:</p>
 <pre><code class="language-haskell">foreign import data Effect :: Type -&gt; Type
@@ -1088,9 +1122,11 @@ main();
                             <a rel="prev" href="chapter9.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
+
                             <a rel="next" href="chapter11.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
+
                         <div style="clear: both"></div>
                     </nav>
                 </div>
@@ -1100,6 +1136,7 @@ main();
                     <a rel="prev" href="chapter9.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
+
                     <a rel="next" href="chapter11.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
@@ -1107,16 +1144,25 @@ main();
 
         </div>
 
-        <script type="text/javascript">
+
+
+
+        <script>
             window.playground_copyable = true;
         </script>
-        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
-        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
-        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
 
         <!-- Custom JS scripts -->
+
+
+    </div>
     </body>
 </html>

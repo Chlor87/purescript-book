@@ -4,8 +4,10 @@
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Asynchronous Effects - PureScript by Example</title>
+
+
         <!-- Custom HTML head -->
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
@@ -16,25 +18,29 @@
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
         <link rel="stylesheet" href="css/print.css" media="print">
+
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
         <link rel="stylesheet" href="fonts/fonts.css">
+
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+
     </head>
     <body>
+    <div id="body-container">
         <!-- Provide site root to javascript -->
-        <script type="text/javascript">
+        <script>
             var path_to_root = "";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
-        <script type="text/javascript">
+        <script>
             try {
                 var theme = localStorage.getItem('mdbook-theme');
                 var sidebar = localStorage.getItem('mdbook-sidebar');
@@ -50,7 +56,7 @@
         </script>
 
         <!-- Set the theme before any content is loaded, prevents flash -->
-        <script type="text/javascript">
+        <script>
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
@@ -62,7 +68,7 @@
         </script>
 
         <!-- Hide / unhide sidebar before it is displayed -->
-        <script type="text/javascript">
+        <script>
             var html = document.querySelector('html');
             var sidebar = 'hidden';
             if (document.body.clientWidth >= 1080) {
@@ -83,7 +89,7 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                <div id="menu-bar-hover-placeholder"></div>
+                                <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky bordered">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
@@ -93,7 +99,7 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
@@ -113,6 +119,7 @@
                         <a href="https://github.com/purescript-contrib/purescript-book" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
+
                     </div>
                 </div>
 
@@ -126,8 +133,9 @@
                         </ul>
                     </div>
                 </div>
+
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
-                <script type="text/javascript">
+                <script>
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
                     document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
                     Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
@@ -148,7 +156,7 @@
 <li><code>affjax</code> - HTTP requests with AJAX and <code>Aff</code>.</li>
 <li><code>parallel</code> - parallel execution of <code>Aff</code>.</li>
 </ul>
-<p>When running outside of the browser (such as in our Node.js environment), the <code>affjax</code> library requires the <code>xhr2</code> NPM module. Install that by running:</p>
+<p>When running outside of the browser (such as in our Node.js environment), the <code>affjax</code> library requires the <code>xhr2</code> NPM module, which is listed as dependency in the <code>package.json</code> of this chapter. Install that by running:</p>
 <pre><code class="language-shell">$ npm install
 </code></pre>
 <h2 id="asynchronous-javascript"><a class="header" href="#asynchronous-javascript">Asynchronous JavaScript</a></h2>
@@ -173,7 +181,25 @@ copyFile('file1.txt', 'file2.txt')
 </ul>
 <h2 id="asynchronous-purescript"><a class="header" href="#asynchronous-purescript">Asynchronous PureScript</a></h2>
 <p>The <code>Aff</code> monad in PureScript offers similar ergonomics of JavaScript's <code>async</code>/<code>await</code> syntax. Here is the same <code>copyFile</code> example from before, but rewritten in PureScript using <code>Aff</code>:</p>
-<pre><code class="language-hs">
+<pre><code class="language-hs">import Prelude
+import Data.Either (Either(..))
+import Effect.Aff (Aff, attempt, message)
+import Effect.Class.Console (log)
+import Node.Encoding (Encoding(..))
+import Node.FS.Aff (readTextFile, writeTextFile)
+import Node.Path (FilePath)
+
+copyFile :: FilePath -&gt; FilePath -&gt; Aff Unit
+copyFile file1 file2 = do
+  my_data &lt;- readTextFile UTF8 file1
+  writeTextFile UTF8 file2 my_data
+
+main :: Aff Unit
+main = do
+  result &lt;- attempt $ copyFile &quot;file1.txt&quot; &quot;file2.txt&quot;
+  case result of
+    Left e -&gt; log $ &quot;There was a problem with copyFile: &quot; &lt;&gt; message e
+    _ -&gt; pure unit
 </code></pre>
 <p>It is also possible to re-write the above snippet using callbacks or synchronous functions (for example with <code>Node.FS.Async</code> and <code>Node.FS.Sync</code> respectively), but those share the same downsides as discussed earlier with JavaScript, and so that coding style is not recommended.</p>
 <p>The syntax for working with <code>Aff</code> is very similar to working with <code>Effect</code>. They are both monads, and can therefore be written with do notation.</p>
@@ -213,7 +239,18 @@ copyFile('file1.txt', 'file2.txt')
 <p>The <code>affjax</code> library offers a convenient way to make asynchronous AJAX HTTP requests with <code>Aff</code>. Depending on what environment you are targeting you need to use either the <a href="https://github.com/purescript-contrib/purescript-affjax-web">purescript-affjax-web</a> or the <a href="https://github.com/purescript-contrib/purescript-affjax-node">purescript-affjax-node</a> library.
 In the rest of this chapter we will be targeting node and thus using <code>purescript-affjax-node</code>.
 Consult the <a href="https://pursuit.purescript.org/packages/purescript-affjax">Affjax docs</a> for more usage information. Here is an example that makes HTTP GET requests at a provided URL and returns the response body or an error message:</p>
-<pre><code class="language-hs">
+<pre><code class="language-hs">import Prelude
+import Affjax.Node as AN
+import Affjax.ResponseFormat as ResponseFormat
+import Data.Either (Either(..))
+import Effect.Aff (Aff)
+
+getUrl :: String -&gt; Aff String
+getUrl url = do
+  result &lt;- AN.get ResponseFormat.string url
+  pure case result of
+    Left err -&gt; &quot;GET /api response failed to decode: &quot; &lt;&gt; AN.printError err
+    Right response -&gt; response.body
 </code></pre>
 <p>When calling this in the repl, <code>launchAff_</code> is required to convert the <code>Aff</code> to a repl-compatible <code>Effect</code>:</p>
 <pre><code class="language-shell">$ spago repl
@@ -253,7 +290,22 @@ unit
 <p>To demonstrate the difference between sequential and parallel execution, we'll create an array of 100 10-millisecond delays, then execute those delays with both techniques.
 You'll notice in the repl that <code>seqDelay</code> is much slower than <code>parDelay</code>.
 Note that parallel execution is enabled by simply replacing <code>sequence_</code> with <code>parSequence_</code>.</p>
-<pre><code class="language-hs">
+<pre><code class="language-hs">import Prelude
+
+import Control.Parallel (parSequence_)
+import Data.Array (replicate)
+import Data.Foldable (sequence_)
+import Effect (Effect)
+import Effect.Aff (Aff, Milliseconds(..), delay, launchAff_)
+
+delayArray :: Array (Aff Unit)
+delayArray = replicate 100 $ delay $ Milliseconds 10.0
+
+seqDelay :: Effect Unit
+seqDelay = launchAff_ $ sequence_ delayArray
+
+parDelay :: Effect Unit
+parDelay = launchAff_ $ parSequence_ delayArray
 </code></pre>
 <pre><code class="language-shell">$ spago repl
 
@@ -266,7 +318,21 @@ unit
 unit
 </code></pre>
 <p>Here's a more real-world example of making multiple HTTP requests in parallel. We're reusing our <code>getUrl</code> function to fetch information from two users in parallel. Note that <code>parTraverse</code> (the parallel version of <code>traverse</code>) is used in this case. This example would also work fine with <code>traverse</code> instead, but it will be slower.</p>
-<pre><code class="language-hs">
+<pre><code class="language-hs">import Prelude
+
+import Control.Parallel (parTraverse)
+import Effect (Effect)
+import Effect.Aff (launchAff_)
+import Effect.Class.Console (logShow)
+import Test.HTTP (getUrl)
+
+fetchPar :: Effect Unit
+fetchPar =
+  launchAff_ do
+    let
+      urls = map (\n -&gt; &quot;https://reqres.in/api/users/&quot; &lt;&gt; show n) [ 1, 2 ]
+    res &lt;- parTraverse getUrl urls
+    logShow res
 </code></pre>
 <pre><code class="language-shell">$ spago repl
 
@@ -331,9 +397,11 @@ $ cat c/a/a.txt
                             <a rel="prev" href="chapter8.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
+
                             <a rel="next" href="chapter10.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
+
                         <div style="clear: both"></div>
                     </nav>
                 </div>
@@ -343,6 +411,7 @@ $ cat c/a/a.txt
                     <a rel="prev" href="chapter8.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
+
                     <a rel="next" href="chapter10.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
@@ -350,16 +419,25 @@ $ cat c/a/a.txt
 
         </div>
 
-        <script type="text/javascript">
+
+
+
+        <script>
             window.playground_copyable = true;
         </script>
-        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
-        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
-        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
 
         <!-- Custom JS scripts -->
+
+
+    </div>
     </body>
 </html>
