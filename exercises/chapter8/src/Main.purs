@@ -3,18 +3,17 @@ module Main where
 import Prelude
 
 import Data.AddressBook (PhoneNumber, examplePerson)
-import Data.AddressBook.Validation (Errors, validatePerson')
-import Data.Array (mapWithIndex, updateAt)
+import Data.AddressBook.Validation (Errors, Field(..), ValidationError(..), validatePerson')
+import Data.Array (filter, length, mapWithIndex, updateAt)
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..), fromMaybe)
-import Data.Tuple (Tuple(..))
 import Effect (Effect)
 import Effect.Console (log)
-import Effect.Exception (throw)
+import Partial.Unsafe (unsafePartial)
 import React.Basic.DOM as D
 import React.Basic.DOM.Events (targetValue)
 import React.Basic.Events (handler)
-import React.Basic.Hooks (ReactComponent, element, reactComponent, useState)
+import React.Basic.Hooks (ReactComponent, Component, element, reactComponent, useState, (/\))
 import React.Basic.Hooks as R
 import Web.DOM.NonElementParentNode (getElementById)
 import Web.HTML (window)
@@ -29,60 +28,74 @@ renderValidationErrors :: Errors -> Array R.JSX
 renderValidationErrors [] = []
 renderValidationErrors xs =
   let
-    renderError :: String -> R.JSX
-    renderError err = D.li_ [ D.text err ]
+    renderError :: ValidationError -> R.JSX
+    renderError (ValidationError _ err) = D.div
+      { className:
+          "alert alert-danger"
+      , children: [ D.text err ]
+      }
   in
-    [ D.div
-        { className: "alert alert-danger row"
-        , children: [ D.ul_ (map renderError xs) ]
-        }
-    ]
+    renderError <$> xs
+
 -- ANCHOR_END: renderValidationErrors
 
 -- Helper function to render a single form field with an
 -- event handler to update
 -- ANCHOR: formField
-formField :: String -> String -> String -> (String -> Effect Unit) -> R.JSX
-formField name placeholder value setValue =
-  D.label
-    { className: "form-group row"
-    , children:
-        [ D.div
-            { className: "col-sm col-form-label"
-            , children: [ D.text name ]
-            }
-        , D.div
-            { className: "col-sm"
-            , children:
-                [ D.input
-                    { className: "form-control"
-                    , placeholder
-                    , value
-                    , onChange:
-                        let
-                          handleValue :: Maybe String -> Effect Unit
-                          handleValue (Just v) = setValue v
-                          handleValue Nothing  = pure unit
-                        in
-                          handler targetValue handleValue
-                    }
-                ]
-            }
-        ]
-    }
+formField :: Field -> Errors -> String -> (String -> Effect Unit) -> R.JSX
+formField field errors value setValue =
+  let
+    e = filter (\(ValidationError f _) -> f == field) errors
+    error = case e of
+      [ (ValidationError _ e) ] -> D.div
+        { className: "invalid-feedback"
+        , children: [ D.text e ]
+        }
+      _ -> R.empty
+    hasError = length e == 1
+
+  in
+    D.label
+      { className: "form-group row"
+      , children:
+          [ D.div
+              { className: "col-sm-4 col-form-label"
+              , children: [ D.text $ show field ]
+              }
+          , D.div
+              { className: "col-sm-8"
+              , children:
+                  [ D.input
+                      { className: "form-control " <> if hasError then "is-invalid" else "is-valid"
+                      , placeholder: show field
+                      , value
+                      , onChange:
+                          let
+                            handleValue :: Maybe String -> Effect Unit
+                            handleValue (Just v) = setValue v
+                            handleValue Nothing = pure unit
+                          in
+                            handler targetValue handleValue
+                      }
+                  , error
+                  ]
+              }
+          ]
+      }
+
 -- ANCHOR_END: formField
 
 mkAddressBookApp :: Effect (ReactComponent {})
 mkAddressBookApp =
   -- incoming \props are unused
-  reactComponent "AddressBookApp" \props -> R.do
+  reactComponent "AddressBookApp" \_ -> R.do
     -- `useState` takes a default initial value and returns the
     -- current value and a way to update the value.
     -- Consult react-hooks docs for a more detailed explanation of `useState`.
-    Tuple person setPerson <- useState examplePerson
+    person /\ setPerson <- useState examplePerson
     let
       errors = case validatePerson' person of
-        Left  e -> e
+        Left e -> e
         Right _ -> []
 
       -- helper-function to return array unchanged instead of Nothing if index is out of bounds
@@ -93,8 +106,8 @@ mkAddressBookApp =
       renderPhoneNumber :: Int -> PhoneNumber -> R.JSX
       renderPhoneNumber index phone =
         formField
-          (show phone."type")
-          "XXX-XXX-XXXX"
+          (Phone phone.type)
+          errors
           phone.number
           (\s -> setPerson _ { phones = updateAt' index phone { number = s } person.phones })
 
@@ -106,50 +119,44 @@ mkAddressBookApp =
       $ D.div
           { className: "container"
           , children:
-              renderValidationErrors errors
-                <> [ D.div
-                      { className: "row"
-                      , children:
-                          [ D.form_
-                              $ [ D.h3_ [ D.text "Basic Information" ]
-                                , formField "First Name" "First Name" person.firstName \s ->
-                                    setPerson _ { firstName = s }
-                                , formField "Last Name" "Last Name" person.lastName \s ->
-                                    setPerson _ { lastName = s }
-                                , D.h3_ [ D.text "Address" ]
-                                , formField "Street" "Street" person.homeAddress.street \s ->
-                                    setPerson _ { homeAddress { street = s } }
-                                , formField "City" "City" person.homeAddress.city \s ->
-                                    setPerson _ { homeAddress { city = s } }
-                                , formField "State" "State" person.homeAddress.state \s ->
-                                    setPerson _ { homeAddress { state = s } }
-                                , D.h3_ [ D.text "Contact Information" ]
-                                ]
-                              <> renderPhoneNumbers
-                          ]
-                      }
-                  ]
+              -- renderValidationErrors errors
+              --   <>
+              [ D.div
+                  { className: "row"
+                  , children:
+                      [ D.div
+                          { className: "col-sm-12"
+                          , children:
+                              [ D.form_
+                                  $
+                                    [ D.h3_ [ D.text "Basic Information" ]
+                                    , formField FirstName errors person.firstName \s ->
+                                        setPerson _ { firstName = s }
+                                    , formField LastName errors person.lastName \s ->
+                                        setPerson _ { lastName = s }
+                                    , D.h3_ [ D.text "Address" ]
+                                    , formField Street errors person.homeAddress.street \s ->
+                                        setPerson _ { homeAddress { street = s } }
+                                    , formField City errors person.homeAddress.city \s ->
+                                        setPerson _ { homeAddress { city = s } }
+                                    , formField State errors person.homeAddress.state \s ->
+                                        setPerson _ { homeAddress { state = s } }
+                                    , D.h3_ [ D.text "Contact Information" ]
+                                    ]
+                                      <> renderPhoneNumbers
+                              ]
+                          }
+                      ]
+                  }
+              ]
           }
-    -- ANCHOR_END: mkAddressBookApp_pure
+
+-- ANCHOR_END: mkAddressBookApp_pure
 
 -- ANCHOR: main
 main :: Effect Unit
-main = do
+main = unsafePartial do
   log "Rendering address book component"
-  -- Get window object
-  w <- window
-  -- Get window's HTML document
-  doc <- document w
-  -- Get "container" element in HTML
-  ctr <- getElementById "container" $ toNonElementParentNode doc
-  case ctr of
-    Nothing -> throw "Container element not found."
-    Just c -> do
-      -- Create AddressBook react component
-      addressBookApp <- mkAddressBookApp
-      let
-        -- Create JSX node from react component. Pass-in empty props
-        app = element addressBookApp {}
-      -- Render AddressBook JSX node in DOM "container" element
-      D.render app c
--- ANCHOR_END: main
+  Just ctr <- getElementById "container" <<< toNonElementParentNode =<< document =<< window
+  addressBookApp <- mkAddressBookApp
+  D.render (element addressBookApp {}) ctr

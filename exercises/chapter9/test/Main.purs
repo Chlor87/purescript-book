@@ -36,11 +36,12 @@ reqUrl :: String
 reqUrl =
   -- Both http and https work for this API endpoint.
   "https://jsonplaceholder.typicode.com/todos/1"
-  -- If you want or need to use the http version (not the https), just
-  -- remove the 's' from `https://`:
-  --"http://jsonplaceholder.typicode.com/todos/1"
-  -- Use this url for the http-server solution:
-  --"http://localhost:42524/user.txt"
+
+-- If you want or need to use the http version (not the https), just
+-- remove the 's' from `https://`:
+--"http://jsonplaceholder.typicode.com/todos/1"
+-- Use this url for the http-server solution:
+--"http://localhost:42524/user.txt"
 
 main :: Effect Unit
 main =
@@ -50,7 +51,6 @@ main =
       files <- readdir outDir
       for_ files \f -> unlink $ Path.concat [ outDir, f ]
     runChapterExamples
-    {-  Move this block comment starting point to enable more tests
     test "concatenateFiles" do
       let
         inFoo = Path.concat [ inDir, "foo.txt" ]
@@ -64,6 +64,7 @@ main =
       inBarTxt <- readTextFile UTF8 inBar
       outFooBarTxt <- readTextFile UTF8 outFooBar
       Assert.equal (inFooTxt <> inBarTxt) outFooBarTxt
+
     test "concatenateMany" do
       let
         inFiles = map (\i -> Path.concat [ inDir, "many", "file" <> show i <> ".txt" ]) $ 1 .. 9
@@ -76,6 +77,7 @@ main =
       actualOutTxt <- readTextFile UTF8 outFile
       expectedOutTxt <- readTextFile UTF8 expectedOutFile
       Assert.equal expectedOutTxt actualOutTxt
+
     suite "countCharacters" do
       test "exists" do
         chars <- countCharacters $ Path.concat [ inDir, "nbChars.txt" ]
@@ -84,6 +86,7 @@ main =
         absolutePath <- realpath $ Path.concat [ inDir ]
         chars <- countCharacters $ Path.concat [ absolutePath, "foof.txt" ]
         Assert.equal (Left ("ENOENT: no such file or directory, open '" <> absolutePath <> Path.sep <> "foof.txt'")) $ lmap message chars
+
     test "writeGet" do
       let
         outFile = Path.concat [ outDir, "user.txt" ]
@@ -94,6 +97,7 @@ main =
       actualOutTxt <- readTextFile UTF8 outFile
       expectedOutTxt <- readTextFile UTF8 expectedOutFile
       Assert.equal expectedOutTxt actualOutTxt
+
     test "concatenateManyParallel" do
       let
         inFiles = map (\i -> Path.concat [ inDir, "many", "file" <> show i <> ".txt" ]) $ 1 .. 9
@@ -106,6 +110,8 @@ main =
       actualOutTxt <- readTextFile UTF8 outFile
       expectedOutTxt <- readTextFile UTF8 expectedOutFile
       Assert.equal expectedOutTxt actualOutTxt
+
+{-  Move this block comment starting point to enable more tests
     suite "getWithTimeout" do
       test "valid site" do
         let

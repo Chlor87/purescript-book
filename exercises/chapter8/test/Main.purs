@@ -61,7 +61,6 @@ main =
                 onlyPositives
                 (2 : (-1) : 4 : Nil)
 
-{-  Move this block comment starting point to enable more tests
         suite "Maybe Monad" do
           let
             -- This is an impractical filtering function,
@@ -79,31 +78,38 @@ main =
             $ filterM
                 onlyPositiveEvenIntegers
                 (2 : 3 : 4 : Nil)
+
       suite "exceptionDivide" do
         test "6 / 3"
           $ Assert.equal 2
           $ fromRight 0
           $ unsafePerformEffect
-          $ try $ exceptionDivide 6 3
+          $ try
+          $ exceptionDivide 6 3
         test "6 / 0"
           $ Assert.equal "div zero"
           $ message
           $ fromLeft (error "")
           $ unsafePerformEffect
-          $ try $ exceptionDivide 6 0
+          $ try
+          $ exceptionDivide 6 0
+
       suite "ST" do
         suite "estimatePi" do
           test "1000 terms of Gregory Series"
             $ Assert.assert "Estimated value of pi not within threshold"
-            (abs (estimatePi 1000 - pi) < 0.002)
+                (abs (estimatePi 1000 - pi) < 0.002)
           test "1000000 terms of Gregory Series"
             $ Assert.assert "Estimated value of pi not within threshold"
-            (abs (estimatePi 1000000 - pi) < 0.000002)
+                (abs (estimatePi 1000000 - pi) < 0.000002)
+
         suite "fibonacci" do
           test "40th Fibonacci number"
             $ Assert.equal 102334155 (fibonacci 40)
           test "45th Fibonacci number"
             $ Assert.equal 1134903170 (fibonacci 45)
+
+{-  Move this block comment starting point to enable more tests
 
 -}
 runChapterExamples :: TestSuite
