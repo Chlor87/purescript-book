@@ -681,24 +681,11 @@ main();
 <p>It calls our generated JavaScript equivalent of the <code>main</code> function of <code>module Main</code> (<code>src/main.purs</code>). Recall that <code>spago build</code> puts all generated JavaScript in the <code>output</code> directory.</p>
 <p>The <code>main</code> function uses the DOM and HTML APIs to render our address book component within the <code>container</code> element we defined in <code>index.html</code>:</p>
 <pre><code class="language-hs">main :: Effect Unit
-main = do
+main = unsafePartial do
   log &quot;Rendering address book component&quot;
-  -- Get window object
-  w &lt;- window
-  -- Get window's HTML document
-  doc &lt;- document w
-  -- Get &quot;container&quot; element in HTML
-  ctr &lt;- getElementById &quot;container&quot; $ toNonElementParentNode doc
-  case ctr of
-    Nothing -&gt; throw &quot;Container element not found.&quot;
-    Just c -&gt; do
-      -- Create AddressBook react component
-      addressBookApp &lt;- mkAddressBookApp
-      let
-        -- Create JSX node from react component. Pass-in empty props
-        app = element addressBookApp {}
-      -- Render AddressBook JSX node in DOM &quot;container&quot; element
-      D.render app c
+  Just ctr &lt;- getElementById &quot;container&quot; &lt;&lt;&lt; toNonElementParentNode =&lt;&lt; document =&lt;&lt; window
+  addressBookApp &lt;- mkAddressBookApp
+  D.render (element addressBookApp {}) ctr
 </code></pre>
 <p>Note that these three lines:</p>
 <pre><code class="language-hs">w &lt;- window
@@ -816,14 +803,15 @@ setPerson :: (state -&gt; state) -&gt; Effect Unit
 renderValidationErrors [] = []
 renderValidationErrors xs =
   let
-    renderError :: String -&gt; R.JSX
-    renderError err = D.li_ [ D.text err ]
+    renderError :: ValidationError -&gt; R.JSX
+    renderError (ValidationError _ err) = D.div
+      { className:
+          &quot;alert alert-danger&quot;
+      , children: [ D.text err ]
+      }
   in
-    [ D.div
-        { className: &quot;alert alert-danger row&quot;
-        , children: [ D.ul_ (map renderError xs) ]
-        }
-    ]
+    renderError &lt;$&gt; xs
+
 </code></pre>
 <p>Note that since we are simply manipulating regular data structures here, we can use functions like <code>map</code> to build up more interesting elements:</p>
 <pre><code class="language-hs">children: [ D.ul_ (map renderError xs)]
@@ -832,34 +820,47 @@ renderValidationErrors xs =
 <pre><code class="language-hs">className: &quot;alert alert-danger row&quot;
 </code></pre>
 <p>A second helper function is <code>formField</code>, which creates a text input for a single form field:</p>
-<pre><code class="language-hs">formField :: String -&gt; String -&gt; String -&gt; (String -&gt; Effect Unit) -&gt; R.JSX
-formField name placeholder value setValue =
-  D.label
-    { className: &quot;form-group row&quot;
-    , children:
-        [ D.div
-            { className: &quot;col-sm col-form-label&quot;
-            , children: [ D.text name ]
-            }
-        , D.div
-            { className: &quot;col-sm&quot;
-            , children:
-                [ D.input
-                    { className: &quot;form-control&quot;
-                    , placeholder
-                    , value
-                    , onChange:
-                        let
-                          handleValue :: Maybe String -&gt; Effect Unit
-                          handleValue (Just v) = setValue v
-                          handleValue Nothing  = pure unit
-                        in
-                          handler targetValue handleValue
-                    }
-                ]
-            }
-        ]
-    }
+<pre><code class="language-hs">formField :: Field -&gt; Errors -&gt; String -&gt; (String -&gt; Effect Unit) -&gt; R.JSX
+formField field errors value setValue =
+  let
+    e = filter (\(ValidationError f _) -&gt; f == field) errors
+    error = case e of
+      [ (ValidationError _ e) ] -&gt; D.div
+        { className: &quot;invalid-feedback&quot;
+        , children: [ D.text e ]
+        }
+      _ -&gt; R.empty
+    hasError = length e == 1
+
+  in
+    D.label
+      { className: &quot;form-group row&quot;
+      , children:
+          [ D.div
+              { className: &quot;col-sm-4 col-form-label&quot;
+              , children: [ D.text $ show field ]
+              }
+          , D.div
+              { className: &quot;col-sm-8&quot;
+              , children:
+                  [ D.input
+                      { className: &quot;form-control &quot; &lt;&gt; if hasError then &quot;is-invalid&quot; else &quot;is-valid&quot;
+                      , placeholder: show field
+                      , value
+                      , onChange:
+                          let
+                            handleValue :: Maybe String -&gt; Effect Unit
+                            handleValue (Just v) = setValue v
+                            handleValue Nothing = pure unit
+                          in
+                            handler targetValue handleValue
+                      }
+                  , error
+                  ]
+              }
+          ]
+      }
+
 </code></pre>
 <p>Putting the <code>input</code> and display <code>text</code> in a <code>label</code> aids in accessibility for screen readers.</p>
 <p>The <code>onChange</code> attribute allows us to describe how to respond to user input. We use the <code>handler</code> function, which has the following type:</p>
