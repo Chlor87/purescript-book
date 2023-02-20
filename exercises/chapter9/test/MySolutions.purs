@@ -5,16 +5,16 @@ import Prelude
 import Affjax.Node (get)
 import Affjax.ResponseFormat (string)
 import Control.Parallel (parOneOf, parTraverse)
-import Data.Either (Either(..))
-import Data.Maybe (Maybe)
-import Data.String (length)
-import Data.Traversable (fold)
+import Data.Either (Either(..), hush)
+import Data.Maybe (Maybe(..))
+import Data.String (Pattern(..), length, split)
+import Data.Traversable (fold, sequence)
 import Effect (Effect)
-import Effect.Aff (Aff, Error, attempt, delay, launchAff_)
+import Effect.Aff (Aff, Error, Milliseconds(..), attempt, delay, launchAff_)
 import Effect.Class.Console (logShow)
 import Node.Encoding (Encoding(..))
 import Node.FS.Aff (readTextFile, writeTextFile)
-import Node.Path (FilePath)
+import Node.Path (FilePath, concat, dirname)
 
 -- Note to reader: Add your solutions to this file
 
@@ -43,11 +43,24 @@ writeGet url file = do
 concatenateManyParallel ∷ Array String → String → Aff Unit
 concatenateManyParallel = concatenateMany
 
--- getWithTimeout :: Number -> String -> Aff (Maybe String)
--- getWithTimeout n url = do
---   res <- parOneOf [ delay n, get string url ]
---   pure $ pure unit
+getWithTimeout :: Number -> String -> Aff (Maybe String)
+getWithTimeout n url = parOneOf
+  [ get string url >>= hush >>> map _.body >>> pure
+  , delay (Milliseconds n) $> Nothing
+  ]
+
+recurseFiles :: FilePath -> Aff (Array String)
+recurseFiles root = do
+  files <- pure <<< split (Pattern "\n") =<< readTextFile UTF8 root
+  case files of
+    [ "" ] -> pure [ root ]
+    _ -> do
+      let
+        dir = dirname root
+        files' = (\x -> concat [ dir, x ]) <$> files
+      next <- pure <<< fold =<< recurseFiles `parTraverse` files'
+      pure $ [ root ] <> next
 
 main :: Effect Unit
 main = launchAff_ do
-  pure unit
+  logShow $ sequence $ Just <$> [ 1, 2, 3 ]

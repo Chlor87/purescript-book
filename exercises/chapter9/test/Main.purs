@@ -111,7 +111,6 @@ main =
       expectedOutTxt <- readTextFile UTF8 expectedOutFile
       Assert.equal expectedOutTxt actualOutTxt
 
-{-  Move this block comment starting point to enable more tests
     suite "getWithTimeout" do
       test "valid site" do
         let
@@ -122,6 +121,7 @@ main =
       test "no response" do
         actual <- getWithTimeout 10.0 "https://example.com:81"
         Assert.equal Nothing actual
+
     suite "recurseFiles" do
       let
         recurseDir = Path.concat [ inDir, "tree" ]
@@ -141,6 +141,7 @@ main =
         actual <- recurseFiles file
         Assert.equal (Set.fromFoldable expected) $ Set.fromFoldable actual
 
+{-  Move this block comment starting point to enable more tests
 -}
 runChapterExamples :: TestSuite
 runChapterExamples = do

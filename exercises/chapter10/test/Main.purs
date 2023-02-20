@@ -25,7 +25,6 @@ main :: Effect Unit
 main =
   runTest do
     runChapterExamples
-    {-  Move this block comment starting point to enable more tests
     suite "Exercise Group - Calling JavaScript" do
       suite "Exercise - volumeFn" do
         test "1 2 3" do
@@ -34,6 +33,7 @@ main =
         test "1 0 3" do
           Assert.equal 0.0
             $ runFn3 volumeFn 1.0 0.0 3.0
+
       suite "Exercise - volumeArrow" do
         test "1 2 3" do
           Assert.equal 6.0
@@ -41,6 +41,7 @@ main =
         test "1 0 3" do
           Assert.equal 0.0
             $ volumeArrow 1.0 0.0 3.0
+
     suite "Exercise Group - Passing Simple Types" do
       suite "Exercise - cumulativeSumsComplex" do
         test "sequential" do
@@ -54,6 +55,8 @@ main =
                 , { real: 3.0, imag: 4.0 }
                 , { real: 5.0, imag: 6.0 }
                 ]
+
+{-  Move this block comment starting point to enable more tests
     suite "Exercise Group - Beyond Simple Types" do
       suite "Exercise - quadraticRoots" do
         let
