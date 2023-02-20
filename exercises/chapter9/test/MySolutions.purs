@@ -45,7 +45,7 @@ concatenateManyParallel = concatenateMany
 
 getWithTimeout :: Number -> String -> Aff (Maybe String)
 getWithTimeout n url = parOneOf
-  [ get string url >>= hush >>> map _.body >>> pure
+  [ get string url >>= map _.body >>> hush >>> pure
   , delay (Milliseconds n) $> Nothing
   ]
 
@@ -64,3 +64,5 @@ recurseFiles root = do
 main :: Effect Unit
 main = launchAff_ do
   logShow $ sequence $ Just <$> [ 1, 2, 3 ]
+  logShow $ hush <<< map _.body $ Right { body: "test" }
+  logShow $ hush <<< map _.body $ (Left { body: "test" } :: Either { body :: String } { body :: String })
